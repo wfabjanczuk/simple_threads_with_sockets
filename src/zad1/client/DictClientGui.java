@@ -1,4 +1,4 @@
-package zad1;
+package zad1.client;
 
 public class DictClientGui {
 }

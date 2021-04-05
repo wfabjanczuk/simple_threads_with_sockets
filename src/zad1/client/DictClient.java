@@ -1,4 +1,4 @@
-package zad1;
+package zad1.client;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 
 public class DictClient extends JFrame {
     public final static int mainServerPort = 2628;
@@ -31,25 +32,15 @@ public class DictClient extends JFrame {
         try {
             clientSocket = new Socket(server, mainServerPort);
             in = new BufferedReader(
-                    new InputStreamReader(clientSocket.getInputStream(), "UTF8"));
+                    new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
             out = new PrintWriter(
-                    new OutputStreamWriter(clientSocket.getOutputStream(), "UTF8"),
+                    new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_8),
                     true);
-
-            String resp = in.readLine(); // połączenie nawiązane - info o tym
-            System.out.println(resp);
-            if (!resp.startsWith("220")) {
-                cleanExit(1); // jeżeli dostęp niemożliwy
-            }
-
-            // Ustalenie maksymalnego czasu blokowania
-            // na operacji czytania ze strumienia gniazda
 
             clientSocket.setSoTimeout(timeout);
 
-
         } catch (UnknownHostException exc) {
-            System.err.println("Uknown host " + server);
+            System.err.println("Unknown host " + server);
             System.exit(2);
         } catch (Exception exc) {
             exc.printStackTrace();
@@ -68,7 +59,7 @@ public class DictClient extends JFrame {
 
         tf.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                doSearch(tf.getText());
+                makeRequest(tf.getText());
             }
         });
 
@@ -135,9 +126,25 @@ public class DictClient extends JFrame {
         } catch (NumberFormatException exc) {
             server = args[0];
         } catch (ArrayIndexOutOfBoundsException exc) {
+            exc.printStackTrace();
         }
 
         new DictClient(server, timeout);
+    }
+
+    private boolean makeRequest(String req) {
+        try {
+            System.out.println("Request: " + req);
+            out.println(req);
+            String resp = in.readLine();
+            System.out.println(resp);
+            boolean ok = resp.startsWith("0");
+            if (req.startsWith("get") && ok)
+                System.out.println(in.readLine());
+            return ok;
+        } catch (Exception exception) {
+            return false;
+        }
     }
 
 }
