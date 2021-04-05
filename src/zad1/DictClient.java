@@ -15,7 +15,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 public class DictClient extends JFrame {
-    public final static int port = 2628;
+    public final static int mainServerPort = 2628;
     private String server;
     private Socket clientSocket;
     private PrintWriter out;
@@ -29,7 +29,7 @@ public class DictClient extends JFrame {
     public DictClient(String server, int timeout) {
 
         try {
-            clientSocket = new Socket(server, port);
+            clientSocket = new Socket(server, mainServerPort);
             in = new BufferedReader(
                     new InputStreamReader(clientSocket.getInputStream(), "UTF8"));
             out = new PrintWriter(
