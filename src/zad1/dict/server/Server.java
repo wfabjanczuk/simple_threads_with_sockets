@@ -2,12 +2,10 @@ package zad1.dict.server;
 
 import zad1.dict.LoggableSocketThread;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public abstract class Server extends Thread implements LoggableSocketThread {
     protected abstract void handleRequests() throws IOException;
@@ -36,6 +34,26 @@ public abstract class Server extends Thread implements LoggableSocketThread {
         isServerRunning = false;
     }
 
+    public void run() {
+        logThreadStarted();
+        isServerRunning = true;
+
+        while (isServerRunning) {
+            try {
+                Socket connection = serverSocket.accept();
+                handleConnection(connection);
+            } catch (IOException exception) {
+                logThreadException(exception);
+            }
+        }
+
+        try {
+            serverSocket.close();
+        } catch (IOException exception) {
+            logThreadException(exception);
+        }
+    }
+
     protected void handleConnection(Socket connection) {
         try {
             openConnectionResources(connection);
@@ -48,10 +66,23 @@ public abstract class Server extends Thread implements LoggableSocketThread {
     }
 
     private void openConnectionResources(Socket connection) throws IOException {
-        reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        writer = new PrintWriter(connection.getOutputStream(), true);
+        reader = getReaderForConnection(connection);
+        writer = getWriterForConnection(connection);
 
         logThreadConnectionEstablished();
+    }
+
+    protected BufferedReader getReaderForConnection(Socket connection) throws IOException {
+        return new BufferedReader(
+                new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)
+        );
+    }
+
+    protected PrintWriter getWriterForConnection(Socket connection) throws IOException {
+        return new PrintWriter(
+                new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8),
+                true
+        );
     }
 
     private void closeConnectionResources(Socket connection) {

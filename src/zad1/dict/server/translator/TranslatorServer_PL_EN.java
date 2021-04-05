@@ -1,5 +1,7 @@
 package zad1.dict.server.translator;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 
 public class TranslatorServer_PL_EN extends TranslatorServer {
@@ -12,6 +14,23 @@ public class TranslatorServer_PL_EN extends TranslatorServer {
 
     @Override
     protected String getTranslation(String word) {
-        return null;
+        return "hello world";
+    }
+
+    public static void main(String[] args) {
+        ServerSocket serverSocket = null;
+        String host = "localhost";
+
+        try {
+            serverSocket = new ServerSocket();
+            serverSocket.bind(new InetSocketAddress(host, port));
+        } catch (IOException exception) {
+            exception.printStackTrace();
+            System.exit(1);
+        }
+
+        for (int i = 1; i <= 5; i++) {
+            new TranslatorServer_PL_EN(serverSocket);
+        }
     }
 }

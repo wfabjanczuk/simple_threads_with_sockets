@@ -5,6 +5,7 @@ import zad1.dict.server.parser.RequestParser;
 import zad1.dict.server.translator.TranslatorRouteTable;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,36 +17,20 @@ public class MainServer extends Server {
 
     public MainServer(ServerSocket serverSocket) {
         super(serverSocket);
+        prepareInitialResponsePrefix();
+    }
+
+    public String getConnectionLabel() {
+        return "Connection with Client";
     }
 
     protected void handleRequests() throws IOException {
         sendInitialResponse();
 
         for (String line; (line = reader.readLine()) != null; ) {
-            logThreadCustomText(line);
+            logThreadCustomText("Received " + line);
             ParseResult parseResult = RequestParser.parseRequest(line);
             handleParsedRequest(parseResult);
-        }
-    }
-
-    public void run() {
-        prepareInitialResponsePrefix();
-        logThreadStarted();
-        isServerRunning = true;
-
-        while (isServerRunning) {
-            try {
-                Socket connection = serverSocket.accept();
-                handleConnection(connection);
-            } catch (IOException exception) {
-                logThreadException(exception);
-            }
-        }
-
-        try {
-            serverSocket.close();
-        } catch (IOException exception) {
-            logThreadException(exception);
         }
     }
 
@@ -77,7 +62,26 @@ public class MainServer extends Server {
             return;
         }
 
+        forwardRequest(address, parseResult.getOriginalRequest());
         writeOutput(200, "Success");
+    }
+
+    private void forwardRequest(InetSocketAddress address, String originalRequest) throws IOException {
+        logThreadCustomText("Connection to TranslatorServer established.");
+
+        Socket translatorConnection = new Socket(address.getHostName(), address.getPort());
+        PrintWriter printerWriter = getWriterForConnection(translatorConnection);
+        printerWriter.println(originalRequest);
+        logThreadCustomText("Forwarded " + originalRequest);
+
+        try {
+            printerWriter.close();
+            translatorConnection.close();
+
+            logThreadCustomText("Connection to TranslatorServer closed.");
+        } catch (IOException exception) {
+            logThreadException(exception);
+        }
     }
 
     private void writeOutput(int responseCode, String message) throws IOException {

@@ -14,14 +14,19 @@ public abstract class TranslatorServer extends Server {
         super(serverSocket);
     }
 
+    public String getConnectionLabel() {
+        return "Connection with MainServer";
+    }
+
     protected void handleRequests() throws IOException {
         for (String line; (line = reader.readLine()) != null; ) {
-            logThreadCustomText(line);
+            logThreadCustomText("Received " + line);
             ParseResult parseResult = RequestParser.parseRequest(line);
             handleParsedRequest(parseResult);
         }
     }
 
     private void handleParsedRequest(ParseResult parseResult) throws IOException {
+
     }
 }

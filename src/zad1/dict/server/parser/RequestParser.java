@@ -9,8 +9,8 @@ public class RequestParser {
             Pattern.CASE_INSENSITIVE
     );
 
-    public static ParseResult parseRequest(String request) {
-        Matcher matcher = requestPattern.matcher(request);
+    public static ParseResult parseRequest(String originalRequest) {
+        Matcher matcher = requestPattern.matcher(originalRequest);
         if (!matcher.find()) {
             return ParseResult.getInvalidParseResult();
         }
@@ -19,6 +19,6 @@ public class RequestParser {
         String targetLanguage = matcher.group(2);
         Integer port = Integer.parseInt(matcher.group(3));
 
-        return new ParseResult(true, word, targetLanguage, port);
+        return new ParseResult(true, originalRequest, word, targetLanguage, port);
     }
 }

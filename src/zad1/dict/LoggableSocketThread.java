@@ -6,6 +6,10 @@ public interface LoggableSocketThread {
         return this.getClass().getSimpleName() + "@" + this.hashCode() + ":";
     }
 
+    default String getConnectionLabel() {
+        return "Connection";
+    }
+
     default void logThreadException(Exception exception) {
         System.out.println(getThreadLabel() + " " + exception.getMessage());
         exception.printStackTrace();
@@ -24,10 +28,10 @@ public interface LoggableSocketThread {
     }
 
     default void logThreadConnectionEstablished() {
-        System.out.println(getThreadLabel() + " Connection established.");
+        System.out.println(getThreadLabel() + " " + getConnectionLabel() + " established.");
     }
 
     default void logThreadConnectionClosed() {
-        System.out.println(getThreadLabel() + " Connection closed.");
+        System.out.println(getThreadLabel() + " " + getConnectionLabel() + " closed.");
     }
 }
