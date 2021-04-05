@@ -7,7 +7,7 @@ public interface LoggableSocketThread {
     }
 
     default void logThreadException(Exception exception) {
-        System.out.println(getThreadLabel());
+        System.out.println(getThreadLabel() + " " + exception.getMessage());
         exception.printStackTrace();
     }
 

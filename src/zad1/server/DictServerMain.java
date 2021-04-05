@@ -9,12 +9,14 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.UUID;
 
 public class DictServerMain extends Thread implements LoggableSocketThread {
     public final static int port = 2628;
 
     private final ServerSocket serverSocket;
     private volatile boolean isServerRunning;
+    private String initialResponsePrefix;
 
     private BufferedReader reader;
     private PrintWriter writer;
@@ -23,10 +25,19 @@ public class DictServerMain extends Thread implements LoggableSocketThread {
         this.serverSocket = serverSocket;
 
         if (isValid()) {
+            prepareInitialResponsePrefix();
             start();
         } else {
             logThreadCannotStart();
         }
+    }
+
+    private void prepareInitialResponsePrefix() {
+        initialResponsePrefix = "220 "
+                + serverSocket.getInetAddress().getHostName()
+                + " on "
+                + System.getProperty("os.name")
+                + " <auth.mime> ";
     }
 
     private boolean isValid() {
@@ -60,12 +71,21 @@ public class DictServerMain extends Thread implements LoggableSocketThread {
     private void handleConnection(Socket connection) {
         try {
             openConnectionResources(connection);
+            sendInitialResponse();
             handleInput();
         } catch (IOException exception) {
             logThreadException(exception);
         } finally {
             closeConnectionResources(connection);
         }
+    }
+
+    private void sendInitialResponse() {
+        writer.println(initialResponsePrefix + generateMsgId());
+    }
+
+    private String generateMsgId() {
+        return "<" + UUID.randomUUID().toString() + "@" + serverSocket.getInetAddress().getHostName() + ">";
     }
 
     private void openConnectionResources(Socket connection) throws IOException {

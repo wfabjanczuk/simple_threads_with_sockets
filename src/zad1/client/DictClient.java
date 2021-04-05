@@ -37,6 +37,12 @@ public class DictClient extends JFrame {
                     new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_8),
                     true);
 
+            String resp = in.readLine(); // połączenie nawiązane - info o tym
+            System.out.println(resp);
+            if (!resp.startsWith("220")) {
+                cleanExit(1); // jeżeli dostęp niemożliwy
+            }
+
             clientSocket.setSoTimeout(timeout);
 
         } catch (UnknownHostException exc) {
