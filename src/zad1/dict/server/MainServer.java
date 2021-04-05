@@ -1,6 +1,8 @@
 package zad1.dict.server;
 
 import zad1.dict.LoggableSocketThread;
+import zad1.dict.server.parser.ParseResult;
+import zad1.dict.server.parser.RequestParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,7 +74,7 @@ public class MainServer extends Thread implements LoggableSocketThread {
         try {
             openConnectionResources(connection);
             sendInitialResponse();
-            handleInput();
+            handleRequests();
         } catch (IOException exception) {
             logThreadException(exception);
         } finally {
@@ -95,16 +97,25 @@ public class MainServer extends Thread implements LoggableSocketThread {
         logThreadConnectionEstablished();
     }
 
-    private void handleInput() throws IOException {
+    private void handleRequests() throws IOException {
         for (String line; (line = reader.readLine()) != null; ) {
-            System.out.println(line);
-            writeOutput(200, "OK");
+            logThreadCustomText(line);
+            ParseResult parseResult = RequestParser.parseRequest(line);
+            handleParsedRequest(parseResult);
         }
     }
 
+    private void handleParsedRequest(ParseResult parseResult) throws IOException {
+        if (!parseResult.isValid()) {
+            writeOutput(400, "Bad Request");
+            return;
+        }
+
+        writeOutput(200, "Success");
+    }
+
     private void writeOutput(int responseCode, String message) throws IOException {
-        writer.println(responseCode);
-        if (message != null) writer.println(message);
+        writer.println(responseCode + " " + message);
     }
 
     private void closeConnectionResources(Socket connection) {

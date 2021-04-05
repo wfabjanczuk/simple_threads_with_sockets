@@ -11,6 +11,10 @@ public interface LoggableSocketThread {
         exception.printStackTrace();
     }
 
+    default void logThreadCustomText(String customText) {
+        System.out.println(getThreadLabel() + " " + customText);
+    }
+
     default void logThreadStarted() {
         System.out.println(getThreadLabel() + " Started.");
     }
