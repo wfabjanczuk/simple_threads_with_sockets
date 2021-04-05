@@ -1,9 +1,9 @@
 package zad1;
 
-import zad1.client.DictClient;
+import zad1.dict.client.Client;
 
 public class Main {
     public static void main(String[] args) {
-        DictClient.main(args);
+        Client.main(args);
     }
 }

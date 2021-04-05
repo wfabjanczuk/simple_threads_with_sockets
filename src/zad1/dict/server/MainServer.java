@@ -1,6 +1,6 @@
-package zad1.server;
+package zad1.dict.server;
 
-import zad1.LoggableSocketThread;
+import zad1.dict.LoggableSocketThread;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.UUID;
 
-public class DictServerMain extends Thread implements LoggableSocketThread {
+public class MainServer extends Thread implements LoggableSocketThread {
     public final static int port = 2628;
 
     private final ServerSocket serverSocket;
@@ -21,7 +21,7 @@ public class DictServerMain extends Thread implements LoggableSocketThread {
     private BufferedReader reader;
     private PrintWriter writer;
 
-    public DictServerMain(ServerSocket serverSocket) {
+    public MainServer(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
 
         if (isValid()) {
@@ -132,7 +132,7 @@ public class DictServerMain extends Thread implements LoggableSocketThread {
         }
 
         for (int i = 1; i <= 5; i++) {
-            new DictServerMain(serverSocket);
+            new MainServer(serverSocket);
         }
     }
 }

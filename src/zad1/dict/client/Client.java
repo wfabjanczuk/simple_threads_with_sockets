@@ -1,4 +1,4 @@
-package zad1.client;
+package zad1.dict.client;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +15,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 
-public class DictClient extends JFrame {
+public class Client extends JFrame {
     public final static int mainServerPort = 2628;
     private String server;
     private Socket clientSocket;
@@ -27,7 +27,7 @@ public class DictClient extends JFrame {
     Container cp = getContentPane();
 
 
-    public DictClient(String server, int timeout) {
+    public Client(String server, int timeout) {
 
         try {
             clientSocket = new Socket(server, mainServerPort);
@@ -135,7 +135,7 @@ public class DictClient extends JFrame {
             exc.printStackTrace();
         }
 
-        new DictClient(server, timeout);
+        new Client(server, timeout);
     }
 
     private boolean makeRequest(String req) {

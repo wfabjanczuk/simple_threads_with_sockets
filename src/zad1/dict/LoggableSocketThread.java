@@ -1,4 +1,4 @@
-package zad1;
+package zad1.dict;
 
 public interface LoggableSocketThread {
 
