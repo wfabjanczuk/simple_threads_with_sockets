@@ -7,8 +7,6 @@ import zad1.dict.server.MainServer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
@@ -24,7 +22,6 @@ public class Client extends JFrame implements LoggableSocketThread {
     private BufferedReader clientSocketReader;
 
     private ServerSocket serverSocket;
-    private BufferedReader serverSocketReader;
 
     JTextArea ta = new JTextArea(20, 40);
     Container cp = getContentPane();
@@ -77,11 +74,7 @@ public class Client extends JFrame implements LoggableSocketThread {
         tf.setBorder(BorderFactory.createLineBorder(Color.blue, 2));
         cp.add(tf, "South");
 
-        tf.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                makeRequest(tf.getText());
-            }
-        });
+        tf.addActionListener(e -> translate(tf));
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -149,14 +142,17 @@ public class Client extends JFrame implements LoggableSocketThread {
         new Client(server, timeout);
     }
 
-    private void makeRequest(String request) {
+    private void translate(JTextField tf) {
         try {
+            String request = prepareTranslationRequest(tf);
             logThreadCustomText("Sent " + request);
             clientSocketWriter.println(request);
 
             Socket responseConnection = serverSocket.accept();
             responseConnection.setSoTimeout(1000);
-            serverSocketReader = new BufferedReader(new InputStreamReader(responseConnection.getInputStream(), StandardCharsets.UTF_8));
+            BufferedReader serverSocketReader = new BufferedReader(new InputStreamReader(responseConnection.getInputStream(), StandardCharsets.UTF_8));
+
+            // TODO: Close responseConnection and dispose resources
 
             String response = serverSocketReader.readLine();
             logThreadCustomText("Received " + response);
@@ -170,5 +166,10 @@ public class Client extends JFrame implements LoggableSocketThread {
         } catch (Exception exception) {
             exception.printStackTrace();
         }
+    }
+
+    private String prepareTranslationRequest(JTextField tf) {
+        String word = tf.getText();
+        return "{\"" + word + "\",\"EN\",1500}";
     }
 }
