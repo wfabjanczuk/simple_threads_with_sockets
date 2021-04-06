@@ -15,8 +15,8 @@ public class ClientRequestParser {
             return ClientRequestParseResult.getInvalidParseResult();
         }
 
-        String word = matcher.group(1);
-        String targetLanguage = matcher.group(2);
+        String word = matcher.group(1).toLowerCase();
+        String targetLanguage = matcher.group(2).toUpperCase();
         Integer port = Integer.parseInt(matcher.group(3));
 
         return new ClientRequestParseResult(true, word, targetLanguage, port);

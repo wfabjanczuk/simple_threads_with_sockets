@@ -15,7 +15,7 @@ public class MainServerRequestParser {
             return MainServerRequestParseResult.getInvalidParseResult();
         }
 
-        String word = matcher.group(1);
+        String word = matcher.group(1).toLowerCase();
         String hostAddress = matcher.group(2);
         Integer port = Integer.parseInt(matcher.group(3));
 
