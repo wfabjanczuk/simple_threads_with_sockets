@@ -13,6 +13,7 @@ public abstract class Server extends Thread implements LoggableSocketThread {
     protected final ServerSocket serverSocket;
     protected volatile boolean isServerRunning;
 
+    protected Socket connection;
     protected BufferedReader reader;
     protected PrintWriter writer;
 
@@ -40,8 +41,8 @@ public abstract class Server extends Thread implements LoggableSocketThread {
 
         while (isServerRunning) {
             try {
-                Socket connection = serverSocket.accept();
-                handleConnection(connection);
+                connection = serverSocket.accept();
+                handleConnection();
             } catch (IOException exception) {
                 logThreadException(exception);
             }
@@ -54,18 +55,18 @@ public abstract class Server extends Thread implements LoggableSocketThread {
         }
     }
 
-    protected void handleConnection(Socket connection) {
+    protected void handleConnection() {
         try {
-            openConnectionResources(connection);
+            openConnectionResources();
             handleRequests();
         } catch (IOException exception) {
             logThreadException(exception);
         } finally {
-            closeConnectionResources(connection);
+            closeConnectionResources();
         }
     }
 
-    private void openConnectionResources(Socket connection) throws IOException {
+    private void openConnectionResources() throws IOException {
         reader = getReaderForConnection(connection);
         writer = getWriterForConnection(connection);
 
@@ -85,7 +86,7 @@ public abstract class Server extends Thread implements LoggableSocketThread {
         );
     }
 
-    private void closeConnectionResources(Socket connection) {
+    private void closeConnectionResources() {
         try {
             reader.close();
             writer.close();
@@ -95,5 +96,9 @@ public abstract class Server extends Thread implements LoggableSocketThread {
         } catch (IOException exception) {
             logThreadException(exception);
         }
+    }
+
+    protected void writeOutput(int responseCode, String message) throws IOException {
+        writer.println(responseCode + " " + message);
     }
 }

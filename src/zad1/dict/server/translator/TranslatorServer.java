@@ -1,11 +1,14 @@
 package zad1.dict.server.translator;
 
 import zad1.dict.server.Server;
-import zad1.dict.server.parser.ParseResult;
-import zad1.dict.server.parser.RequestParser;
+import zad1.dict.server.parser.MainServerRequestParseResult;
+import zad1.dict.server.parser.MainServerRequestParser;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 public abstract class TranslatorServer extends Server {
     abstract protected String getTranslation(String word);
@@ -21,12 +24,54 @@ public abstract class TranslatorServer extends Server {
     protected void handleRequests() throws IOException {
         for (String line; (line = reader.readLine()) != null; ) {
             logThreadCustomText("Received " + line);
-            ParseResult parseResult = RequestParser.parseRequest(line);
-            handleParsedRequest(parseResult);
+            handleParsedRequest(MainServerRequestParser.parseRequest(line));
         }
     }
 
-    private void handleParsedRequest(ParseResult parseResult) throws IOException {
+    private void handleParsedRequest(MainServerRequestParseResult mainServerRequestParseResult) throws IOException {
+        if (!mainServerRequestParseResult.isValid()) {
+            writeOutput(400, "Bad Request");
+            return;
+        }
 
+        InetSocketAddress address = new InetSocketAddress(
+                mainServerRequestParseResult.getHostAddress(),
+                mainServerRequestParseResult.getPort()
+        );
+        if (address.isUnresolved()) {
+            writeOutput(401, "Bad Client address");
+            return;
+        }
+
+        String wordToTranslate = mainServerRequestParseResult.getWord();
+        String translation = getTranslation(wordToTranslate);
+        if (translation == null) {
+            writeOutput(402, "No translation for word " + wordToTranslate);
+            return;
+        }
+
+        sendTranslationResponse(address, translation);
+        writeOutput(200, getThreadLabel() + " Successfully sent translation to Client");
+    }
+
+    private void sendTranslationResponse(InetSocketAddress address, String translation)
+            throws IOException {
+        logThreadCustomText("Connection to Client established.");
+
+        Socket clientConnection = new Socket(address.getHostName(), address.getPort());
+        PrintWriter printerWriter = getWriterForConnection(clientConnection);
+
+        String translationResponse = "{\"" + translation + "\"}";
+        printerWriter.println(translationResponse);
+        logThreadCustomText("Sent " + translationResponse);
+
+        try {
+            printerWriter.close();
+            clientConnection.close();
+
+            logThreadCustomText("Connection to Client closed.");
+        } catch (IOException exception) {
+            logThreadException(exception);
+        }
     }
 }

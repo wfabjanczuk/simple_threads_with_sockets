@@ -1,14 +1,16 @@
 package zad1.dict.server;
 
-import zad1.dict.server.parser.ParseResult;
-import zad1.dict.server.parser.RequestParser;
+import zad1.dict.server.parser.ClientRequestParseResult;
+import zad1.dict.server.parser.ClientRequestParser;
 import zad1.dict.server.translator.TranslatorRouteTable;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class MainServer extends Server {
@@ -29,8 +31,7 @@ public class MainServer extends Server {
 
         for (String line; (line = reader.readLine()) != null; ) {
             logThreadCustomText("Received " + line);
-            ParseResult parseResult = RequestParser.parseRequest(line);
-            handleParsedRequest(parseResult);
+            handleParsedRequest(ClientRequestParser.parseRequest(line));
         }
     }
 
@@ -50,29 +51,37 @@ public class MainServer extends Server {
         return "<" + UUID.randomUUID().toString() + "@" + serverSocket.getInetAddress().getHostName() + ">";
     }
 
-    private void handleParsedRequest(ParseResult parseResult) throws IOException {
-        if (!parseResult.isValid()) {
+    private void handleParsedRequest(ClientRequestParseResult clientRequestParseResult) throws IOException {
+        if (!clientRequestParseResult.isValid()) {
             writeOutput(400, "Bad Request");
             return;
         }
 
-        InetSocketAddress address = TranslatorRouteTable.getAddressForLanguage(parseResult.getTargetLanguage());
+        InetSocketAddress address = TranslatorRouteTable.getAddressForLanguage(
+                clientRequestParseResult.getTargetLanguage()
+        );
         if (address == null) {
             writeOutput(401, "Bad Target Language");
             return;
         }
 
-        forwardRequest(address, parseResult.getOriginalRequest());
+        sendTranslationRequest(address, clientRequestParseResult);
         writeOutput(200, "Success");
     }
 
-    private void forwardRequest(InetSocketAddress address, String originalRequest) throws IOException {
+    private void sendTranslationRequest(InetSocketAddress address, ClientRequestParseResult clientRequestParseResult)
+            throws IOException {
         logThreadCustomText("Connection to TranslatorServer established.");
 
         Socket translatorConnection = new Socket(address.getHostName(), address.getPort());
         PrintWriter printerWriter = getWriterForConnection(translatorConnection);
-        printerWriter.println(originalRequest);
-        logThreadCustomText("Forwarded " + originalRequest);
+        BufferedReader bufferedReader = getReaderForConnection(translatorConnection);
+
+        String requestForTranslator = getRequestForTranslator(clientRequestParseResult);
+        printerWriter.println(requestForTranslator);
+        logThreadCustomText("Sent " + requestForTranslator);
+
+        System.out.println(bufferedReader.readLine());
 
         try {
             printerWriter.close();
@@ -84,8 +93,14 @@ public class MainServer extends Server {
         }
     }
 
-    private void writeOutput(int responseCode, String message) throws IOException {
-        writer.println(responseCode + " " + message);
+    private String getRequestForTranslator(ClientRequestParseResult clientRequestParseResult) {
+        String requestForTranslator = String.join(",", Arrays.asList(
+                "\"" + clientRequestParseResult.getWord() + "\"",
+                "\"" + connection.getInetAddress().getHostAddress() + "\"",
+                String.valueOf(clientRequestParseResult.getPort())
+        ));
+
+        return "{" + requestForTranslator + "}";
     }
 
     public static void main(String[] args) {

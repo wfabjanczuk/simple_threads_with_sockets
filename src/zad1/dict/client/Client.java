@@ -10,17 +10,18 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 
 public class Client extends JFrame {
     public final static int mainServerPort = 2628;
     private String server;
     private Socket clientSocket;
+    private ServerSocket serverSocket;
     private PrintWriter out;
     private BufferedReader in;
+    private PrintWriter responseOut;
+    private BufferedReader responseIn;
     private String database = "*";  // info ze wszystkich baz
 
     JTextArea ta = new JTextArea(20, 40);
@@ -36,6 +37,9 @@ public class Client extends JFrame {
             out = new PrintWriter(
                     new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_8),
                     true);
+
+            serverSocket = new ServerSocket();
+            serverSocket.bind(new InetSocketAddress("localhost", 1500));
 
             String resp = in.readLine(); // połączenie nawiązane - info o tym
             System.out.println(resp);
@@ -142,12 +146,13 @@ public class Client extends JFrame {
         try {
             System.out.println("Request: " + req);
             out.println(req);
-            String resp = in.readLine();
+            Socket responseConnection = serverSocket.accept();
+            responseIn = new BufferedReader(
+                    new InputStreamReader(responseConnection.getInputStream(), StandardCharsets.UTF_8));
+
+            String resp = responseIn.readLine();
             System.out.println(resp);
-            boolean ok = resp.startsWith("0");
-            if (req.startsWith("get") && ok)
-                System.out.println(in.readLine());
-            return ok;
+            return true;
         } catch (Exception exception) {
             return false;
         }

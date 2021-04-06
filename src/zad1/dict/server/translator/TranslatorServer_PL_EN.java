@@ -14,7 +14,7 @@ public class TranslatorServer_PL_EN extends TranslatorServer {
 
     @Override
     protected String getTranslation(String word) {
-        return "hello world";
+        return "house";
     }
 
     public static void main(String[] args) {
