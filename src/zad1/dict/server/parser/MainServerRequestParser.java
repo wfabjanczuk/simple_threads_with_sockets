@@ -4,21 +4,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainServerRequestParser {
-    private static final Pattern requestPattern = Pattern.compile(
+    private static final Pattern pattern = Pattern.compile(
             "^\\{\"(\\w+)\",\"([\\d.]+)\",([1-9]\\d+)\\}$",
             Pattern.CASE_INSENSITIVE
     );
 
-    public static MainServerRequestParseResult parseRequest(String mainServerRequest) {
-        Matcher matcher = requestPattern.matcher(mainServerRequest);
+    public static MainServerRequest parse(String mainServerRequest) {
+        Matcher matcher = pattern.matcher(mainServerRequest);
         if (!matcher.find()) {
-            return MainServerRequestParseResult.getInvalidParseResult();
+            return MainServerRequest.getInvalidParseResult();
         }
 
         String word = matcher.group(1).toLowerCase();
         String hostAddress = matcher.group(2);
         Integer port = Integer.parseInt(matcher.group(3));
 
-        return new MainServerRequestParseResult(true, word, hostAddress, port);
+        return new MainServerRequest(true, word, hostAddress, port);
     }
 }

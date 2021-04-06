@@ -1,7 +1,7 @@
 package zad1.dict.server.translator;
 
 import zad1.dict.server.Server;
-import zad1.dict.server.parser.MainServerRequestParseResult;
+import zad1.dict.server.parser.MainServerRequest;
 import zad1.dict.server.parser.MainServerRequestParser;
 
 import java.io.IOException;
@@ -24,26 +24,26 @@ public abstract class TranslatorServer extends Server {
     protected void handleRequests() throws IOException {
         for (String line; (line = reader.readLine()) != null; ) {
             logThreadCustomText("Received " + line);
-            handleParsedRequest(MainServerRequestParser.parseRequest(line));
+            handleParsedRequest(MainServerRequestParser.parse(line));
         }
     }
 
-    private void handleParsedRequest(MainServerRequestParseResult mainServerRequestParseResult) throws IOException {
-        if (!mainServerRequestParseResult.isValid()) {
+    private void handleParsedRequest(MainServerRequest mainServerRequest) throws IOException {
+        if (!mainServerRequest.isValid()) {
             writeOutput(400, "Bad Request");
             return;
         }
 
         InetSocketAddress address = new InetSocketAddress(
-                mainServerRequestParseResult.getHostAddress(),
-                mainServerRequestParseResult.getPort()
+                mainServerRequest.getHostAddress(),
+                mainServerRequest.getPort()
         );
         if (address.isUnresolved()) {
             writeOutput(401, "Bad Client address");
             return;
         }
 
-        String wordToTranslate = mainServerRequestParseResult.getWord();
+        String wordToTranslate = mainServerRequest.getWord();
         String translation = getTranslation(wordToTranslate);
         if (translation == null) {
             writeOutput(402, "No translation for word " + wordToTranslate);

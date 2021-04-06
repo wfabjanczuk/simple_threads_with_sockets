@@ -1,6 +1,6 @@
 package zad1.dict.server;
 
-import zad1.dict.server.parser.ClientRequestParseResult;
+import zad1.dict.server.parser.ClientRequest;
 import zad1.dict.server.parser.ClientRequestParser;
 import zad1.dict.server.translator.TranslatorRouteTable;
 
@@ -31,7 +31,7 @@ public class MainServer extends Server {
 
         for (String line; (line = reader.readLine()) != null; ) {
             logThreadCustomText("Received " + line);
-            handleParsedRequest(ClientRequestParser.parseRequest(line));
+            handleParsedRequest(ClientRequestParser.parse(line));
         }
     }
 
@@ -51,25 +51,25 @@ public class MainServer extends Server {
         return "<" + UUID.randomUUID().toString() + "@" + serverSocket.getInetAddress().getHostName() + ">";
     }
 
-    private void handleParsedRequest(ClientRequestParseResult clientRequestParseResult) throws IOException {
-        if (!clientRequestParseResult.isValid()) {
+    private void handleParsedRequest(ClientRequest clientRequest) throws IOException {
+        if (!clientRequest.isValid()) {
             writeOutput(400, "Bad Request");
             return;
         }
 
         InetSocketAddress address = TranslatorRouteTable.getAddressForLanguage(
-                clientRequestParseResult.getTargetLanguage()
+                clientRequest.getTargetLanguage()
         );
         if (address == null) {
             writeOutput(401, "Bad Target Language");
             return;
         }
 
-        sendTranslationRequest(address, clientRequestParseResult);
+        sendTranslationRequest(address, clientRequest);
         writeOutput(200, "Success");
     }
 
-    private void sendTranslationRequest(InetSocketAddress address, ClientRequestParseResult clientRequestParseResult)
+    private void sendTranslationRequest(InetSocketAddress address, ClientRequest clientRequest)
             throws IOException {
         logThreadCustomText("Connection to TranslatorServer established.");
 
@@ -77,7 +77,7 @@ public class MainServer extends Server {
         PrintWriter printerWriter = getWriterForConnection(translatorConnection);
         BufferedReader bufferedReader = getReaderForConnection(translatorConnection);
 
-        String requestForTranslator = getRequestForTranslator(clientRequestParseResult);
+        String requestForTranslator = getRequestForTranslator(clientRequest);
         printerWriter.println(requestForTranslator);
         logThreadCustomText("Sent " + requestForTranslator);
 
@@ -93,11 +93,11 @@ public class MainServer extends Server {
         }
     }
 
-    private String getRequestForTranslator(ClientRequestParseResult clientRequestParseResult) {
+    private String getRequestForTranslator(ClientRequest clientRequest) {
         String requestForTranslator = String.join(",", Arrays.asList(
-                "\"" + clientRequestParseResult.getWord() + "\"",
+                "\"" + clientRequest.getWord() + "\"",
                 "\"" + connection.getInetAddress().getHostAddress() + "\"",
-                String.valueOf(clientRequestParseResult.getPort())
+                String.valueOf(clientRequest.getPort())
         ));
 
         return "{" + requestForTranslator + "}";

@@ -1,6 +1,8 @@
 package zad1.dict.client;
 
 import zad1.dict.LoggableSocketThread;
+import zad1.dict.client.parser.TranslatorServerResponse;
+import zad1.dict.client.parser.TranslatorServerResponseParser;
 import zad1.dict.server.MainServer;
 
 import javax.swing.*;
@@ -158,7 +160,13 @@ public class Client extends JFrame implements LoggableSocketThread {
 
             String response = serverSocketReader.readLine();
             logThreadCustomText("Received " + response);
-            ta.setText(response);
+
+            TranslatorServerResponse translatorServerResponse = TranslatorServerResponseParser.parse(response);
+            if (translatorServerResponse.isValid()) {
+                ta.setText(translatorServerResponse.getTranslation());
+            } else {
+                ta.setText("");
+            }
         } catch (Exception exception) {
             exception.printStackTrace();
         }

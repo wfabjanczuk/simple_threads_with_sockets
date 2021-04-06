@@ -1,16 +1,16 @@
 package zad1.dict.server.parser;
 
-public class MainServerRequestParseResult {
+public class MainServerRequest {
     private boolean isValid;
     private String word;
     private String hostAddress;
     private Integer port;
 
-    public static MainServerRequestParseResult getInvalidParseResult() {
-        return new MainServerRequestParseResult(false, null, null, null);
+    public static MainServerRequest getInvalidParseResult() {
+        return new MainServerRequest(false, null, null, null);
     }
 
-    public MainServerRequestParseResult(boolean isValid, String word, String hostAddress, Integer port) {
+    public MainServerRequest(boolean isValid, String word, String hostAddress, Integer port) {
         this.isValid = isValid;
         this.word = word;
         this.hostAddress = hostAddress;

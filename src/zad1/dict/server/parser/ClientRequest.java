@@ -1,16 +1,16 @@
 package zad1.dict.server.parser;
 
-public class ClientRequestParseResult {
+public class ClientRequest {
     private boolean isValid;
     private String word;
     private String targetLanguage;
     private Integer port;
 
-    public static ClientRequestParseResult getInvalidParseResult() {
-        return new ClientRequestParseResult(false, null, null, null);
+    public static ClientRequest getInvalidParseResult() {
+        return new ClientRequest(false, null, null, null);
     }
 
-    public ClientRequestParseResult(boolean isValid, String word, String targetLanguage, Integer port) {
+    public ClientRequest(boolean isValid, String word, String targetLanguage, Integer port) {
         this.isValid = isValid;
         this.word = word;
         this.targetLanguage = targetLanguage;
