@@ -1,5 +1,8 @@
 package zad1.dict.client;
 
+import zad1.dict.LoggableSocketThread;
+import zad1.dict.server.MainServer;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,50 +16,55 @@ import java.io.PrintWriter;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 
-public class Client extends JFrame {
-    public final static int mainServerPort = 2628;
-    private String server;
+public class Client extends JFrame implements LoggableSocketThread {
     private Socket clientSocket;
+    private PrintWriter clientSocketWriter;
+    private BufferedReader clientSocketReader;
+
     private ServerSocket serverSocket;
-    private PrintWriter out;
-    private BufferedReader in;
-    private PrintWriter responseOut;
-    private BufferedReader responseIn;
-    private String database = "*";  // info ze wszystkich baz
+    private BufferedReader serverSocketReader;
 
     JTextArea ta = new JTextArea(20, 40);
     Container cp = getContentPane();
 
+    public String getConnectionLabel() {
+        return "Connection with MainServer";
+    }
 
     public Client(String server, int timeout) {
+        initClientBackend(server, timeout);
+        initClientGui();
+    }
 
+    private void initClientBackend(String clientHost, int timeout) {
         try {
-            clientSocket = new Socket(server, mainServerPort);
-            in = new BufferedReader(
-                    new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
-            out = new PrintWriter(
-                    new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_8),
-                    true);
+            clientSocket = new Socket(clientHost, MainServer.port);
+            clientSocketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
+            clientSocketWriter = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_8), true);
 
             serverSocket = new ServerSocket();
             serverSocket.bind(new InetSocketAddress("localhost", 1500));
+            serverSocket.setSoTimeout(1000);
 
-            String resp = in.readLine(); // połączenie nawiązane - info o tym
+            String resp = clientSocketReader.readLine(); // połączenie nawiązane - info o tym
             System.out.println(resp);
             if (!resp.startsWith("220")) {
                 cleanExit(1); // jeżeli dostęp niemożliwy
             }
+            logThreadConnectionEstablished();
 
             clientSocket.setSoTimeout(timeout);
 
         } catch (UnknownHostException exc) {
-            System.err.println("Unknown host " + server);
+            System.err.println("Unknown host " + clientHost);
             System.exit(2);
         } catch (Exception exc) {
             exc.printStackTrace();
             System.exit(3);
         }
+    }
 
+    private void initClientGui() {
         // wszystko poszło dobrze - tworzymy i pokazujemy okno wyszukiwania
 
         Font f = new Font("Dialog", Font.BOLD, 14);
@@ -98,13 +106,10 @@ public class Client extends JFrame {
             String resp = "",
                     defin = "Uzyskano następujące definicje:\\n";
 
-            // Zlecenie dla serwera
-            out.println("DEFINE " + database + " " + word);
-
             // Czytamy odpowiedź
             // Kod 250 na początku wiersza oznacza koniec definicji
             while (resp != null && !resp.startsWith("250")) {
-                resp = in.readLine();
+                resp = clientSocketReader.readLine();
                 defin += resp + "\\n";
                 if (resp.startsWith("552")) break;  // słowo nie znalezione
             }
@@ -118,8 +123,8 @@ public class Client extends JFrame {
 
     private void cleanExit(int code) {
         try {
-            out.close();
-            in.close();
+            clientSocketWriter.close();
+            clientSocketReader.close();
             clientSocket.close();
         } catch (Exception exc) {
         }
@@ -142,20 +147,20 @@ public class Client extends JFrame {
         new Client(server, timeout);
     }
 
-    private boolean makeRequest(String req) {
+    private void makeRequest(String request) {
         try {
-            System.out.println("Request: " + req);
-            out.println(req);
-            Socket responseConnection = serverSocket.accept();
-            responseIn = new BufferedReader(
-                    new InputStreamReader(responseConnection.getInputStream(), StandardCharsets.UTF_8));
+            logThreadCustomText("Sent " + request);
+            clientSocketWriter.println(request);
 
-            String resp = responseIn.readLine();
-            System.out.println(resp);
-            return true;
+            Socket responseConnection = serverSocket.accept();
+            responseConnection.setSoTimeout(1000);
+            serverSocketReader = new BufferedReader(new InputStreamReader(responseConnection.getInputStream(), StandardCharsets.UTF_8));
+
+            String response = serverSocketReader.readLine();
+            logThreadCustomText("Received " + response);
+            ta.setText(response);
         } catch (Exception exception) {
-            return false;
+            exception.printStackTrace();
         }
     }
-
 }
