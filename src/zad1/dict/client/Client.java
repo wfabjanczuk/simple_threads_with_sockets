@@ -17,6 +17,8 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 
 public class Client extends JFrame implements LoggableSocketThread {
+    private int localPort;
+
     private Socket clientSocket;
     private PrintWriter clientSocketWriter;
     private BufferedReader clientSocketReader;
@@ -26,23 +28,26 @@ public class Client extends JFrame implements LoggableSocketThread {
     JTextArea ta = new JTextArea(20, 40);
     Container cp = getContentPane();
 
+
     public String getConnectionLabel() {
         return "Connection with MainServer";
     }
 
-    public Client(String server, int timeout) {
-        initClientBackend(server, timeout);
+    public Client(String server, int timeout, int localPort) {
+        initClientBackend(server, timeout, localPort);
         initClientGui();
     }
 
-    private void initClientBackend(String clientHost, int timeout) {
+    private void initClientBackend(String clientHost, int timeout, int localPort) {
+        this.localPort = localPort;
+
         try {
             clientSocket = new Socket(clientHost, MainServer.port);
             clientSocketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
             clientSocketWriter = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_8), true);
 
             serverSocket = new ServerSocket();
-            serverSocket.bind(new InetSocketAddress("localhost", 1500));
+            serverSocket.bind(new InetSocketAddress("localhost", localPort));
             serverSocket.setSoTimeout(1000);
 
             String resp = clientSocketReader.readLine(); // połączenie nawiązane - info o tym
@@ -74,6 +79,10 @@ public class Client extends JFrame implements LoggableSocketThread {
         tf.setBorder(BorderFactory.createLineBorder(Color.blue, 2));
         cp.add(tf, "South");
 
+        ta.setText("Prototyp GUI na podstawie wykładu\n"
+                + "Tłumaczone słowa: dom, szkoła, nauczyciel, droga, krzesło.\n"
+                + "Tymczasowo ustawiono na sztywno język angielski."
+        );
         tf.addActionListener(e -> translate(tf));
 
         addWindowListener(new WindowAdapter() {
@@ -83,8 +92,13 @@ public class Client extends JFrame implements LoggableSocketThread {
             }
         });
 
+        setTitle(getThreadLabel() + " on port " + localPort);
         pack();
-        show();
+        if (localPort > 1500) {
+            // TODO: replace it, now it is for testing only
+            setLocationRelativeTo(null);
+        }
+        setVisible(true);
 
         // Ustalenie fokusu na polu wprowadzania szukanych słów
         SwingUtilities.invokeLater(new Runnable() {
@@ -126,22 +140,6 @@ public class Client extends JFrame implements LoggableSocketThread {
         System.exit(code);
     }
 
-    public static void main(String[] args) {
-
-        int timeout = 0;
-        String server = "dict.org";
-        try {
-            timeout = Integer.parseInt(args[0]);
-            server = args[1];
-        } catch (NumberFormatException exc) {
-            server = args[0];
-        } catch (ArrayIndexOutOfBoundsException exc) {
-            exc.printStackTrace();
-        }
-
-        new Client(server, timeout);
-    }
-
     private void translate(JTextField tf) {
         try {
             String request = prepareTranslationRequest(tf);
@@ -170,6 +168,14 @@ public class Client extends JFrame implements LoggableSocketThread {
 
     private String prepareTranslationRequest(JTextField tf) {
         String word = tf.getText();
-        return "{\"" + word + "\",\"EN\",1500}";
+        return "{\"" + word + "\",\"EN\"," + localPort + "}";
+    }
+
+    public static void main(String[] args) {
+        int timeout = 0;
+        String server = "localhost";
+        for (int i = 0; i < 2; i++) {
+            new Client(server, timeout, 1500 + i);
+        }
     }
 }
