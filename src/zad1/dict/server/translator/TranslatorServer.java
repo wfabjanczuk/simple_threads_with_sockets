@@ -11,6 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public abstract class TranslatorServer extends Server {
+    // TODO: Tworzenie wątków tylko na potrzebę obsługi tłumaczenia
     abstract protected String getTranslation(String word);
 
     public TranslatorServer(ServerSocket serverSocket) {

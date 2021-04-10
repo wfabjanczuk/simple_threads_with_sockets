@@ -172,6 +172,8 @@ public class Client extends JFrame implements LoggableSocketThread {
     }
 
     public static void main(String[] args) {
+        // TODO: tworzenie pojedynczego klienta z np. portem
+
         int timeout = 0;
         String server = "localhost";
         for (int i = 0; i < 2; i++) {

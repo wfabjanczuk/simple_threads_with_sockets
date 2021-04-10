@@ -104,6 +104,8 @@ public class MainServer extends Server {
     }
 
     public static void main(String[] args) {
+        // TODO: tworzenie wątków dynamiczne na potrzeby nowych klientów
+
         ServerSocket serverSocket = null;
         String host = "localhost";
 
