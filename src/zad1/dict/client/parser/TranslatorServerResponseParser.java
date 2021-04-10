@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public class TranslatorServerResponseParser {
     private static final Pattern pattern = Pattern.compile(
             "^\\{\"(.+)\"\\}$",
-            Pattern.CASE_INSENSITIVE
+            Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CHARACTER_CLASS
     );
 
     public static TranslatorServerResponse parse(String translatorServerResponse) {

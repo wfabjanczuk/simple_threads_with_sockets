@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public class ClientRequestParser {
     private static final Pattern pattern = Pattern.compile(
             "^\\{\"(\\w+)\",\"(\\w{2})\",([1-9]\\d+)\\}$",
-            Pattern.CASE_INSENSITIVE
+            Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CHARACTER_CLASS
     );
 
     public static ClientRequest parse(String clientRequest) {
