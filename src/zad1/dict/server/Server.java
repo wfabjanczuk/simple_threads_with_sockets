@@ -88,10 +88,7 @@ public abstract class Server extends Thread implements LoggableSocketThread {
 
     private void closeConnectionResources() {
         try {
-            reader.close();
-            writer.close();
             connection.close();
-
             logThreadConnectionClosed();
         } catch (IOException exception) {
             logThreadException(exception);

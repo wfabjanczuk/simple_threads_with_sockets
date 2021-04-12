@@ -84,9 +84,7 @@ public class MainServer extends Server {
         System.out.println(bufferedReader.readLine());
 
         try {
-            printerWriter.close();
             translatorConnection.close();
-
             logThreadCustomText("Connection to TranslatorServer closed.");
         } catch (IOException exception) {
             logThreadException(exception);

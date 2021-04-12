@@ -67,9 +67,7 @@ public abstract class TranslatorServer extends Server {
         logThreadCustomText("Sent " + translationResponse);
 
         try {
-            printerWriter.close();
             clientConnection.close();
-
             logThreadCustomText("Connection to Client closed.");
         } catch (IOException exception) {
             logThreadException(exception);
