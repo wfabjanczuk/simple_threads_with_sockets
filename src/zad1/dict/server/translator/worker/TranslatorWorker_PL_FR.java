@@ -1,12 +1,12 @@
-package zad1.dict.server.translator;
+package zad1.dict.server.translator.worker;
+
+import zad1.dict.server.translator.server.Translator;
 
 import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TranslatorServer_PL_FR extends TranslatorServer {
-    public static String targetLanguage = "FR";
-    public static int port = 1603;
+public class TranslatorWorker_PL_FR extends Translator {
     private static final Map<String, String> dictionary = createDictionary();
 
     private static Map<String, String> createDictionary() {
@@ -26,7 +26,7 @@ public class TranslatorServer_PL_FR extends TranslatorServer {
         return dictionary.get(word);
     }
 
-    public TranslatorServer_PL_FR(ServerSocket serverSocket) {
+    public TranslatorWorker_PL_FR(ServerSocket serverSocket) {
         super(serverSocket);
     }
 }

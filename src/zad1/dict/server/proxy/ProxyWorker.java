@@ -1,5 +1,7 @@
-package zad1.dict.server;
+package zad1.dict.server.proxy;
 
+import zad1.dict.LoggableSocketThread;
+import zad1.dict.server.ServerWorker;
 import zad1.dict.server.parser.ClientRequest;
 import zad1.dict.server.parser.ClientRequestParser;
 import zad1.dict.server.translator.TranslatorRouteTable;
@@ -8,22 +10,28 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.UUID;
 
-public class MainServer extends Server {
-    public final static int port = 2628;
+public class ProxyWorker extends ServerWorker implements LoggableSocketThread {
     private String initialResponsePrefix;
+    private final String serverHostname;
+    private final String osName;
 
-    public MainServer(ServerSocket serverSocket) {
-        super(serverSocket);
+    public ProxyWorker(Socket connection, String serverHostname, String osName) {
+        super(connection);
+        this.serverHostname = serverHostname;
+        this.osName = osName;
         prepareInitialResponsePrefix();
     }
 
-    public String getConnectionLabel() {
-        return "Connection with Client";
+    private void prepareInitialResponsePrefix() {
+        initialResponsePrefix = "220 "
+                + serverHostname
+                + " on "
+                + osName
+                + " <auth.mime> ";
     }
 
     protected void handleRequests() throws IOException {
@@ -35,20 +43,12 @@ public class MainServer extends Server {
         }
     }
 
-    private void prepareInitialResponsePrefix() {
-        initialResponsePrefix = "220 "
-                + serverSocket.getInetAddress().getHostName()
-                + " on "
-                + System.getProperty("os.name")
-                + " <auth.mime> ";
-    }
-
     private void sendInitialResponse() {
         writer.println(initialResponsePrefix + generateMsgId());
     }
 
     private String generateMsgId() {
-        return "<" + UUID.randomUUID().toString() + "@" + serverSocket.getInetAddress().getHostName() + ">";
+        return "<" + UUID.randomUUID().toString() + "@" + serverHostname + ">";
     }
 
     private void handleParsedRequest(ClientRequest clientRequest) throws IOException {
@@ -71,7 +71,7 @@ public class MainServer extends Server {
 
     private void sendTranslationRequest(InetSocketAddress address, ClientRequest clientRequest)
             throws IOException {
-        logThreadCustomText("Connection to TranslatorServer established.");
+        logThreadCustomText("Connection to Translator established.");
 
         Socket translatorConnection = new Socket(address.getHostName(), address.getPort());
         PrintWriter printerWriter = getWriterForConnection(translatorConnection);
@@ -85,7 +85,7 @@ public class MainServer extends Server {
 
         try {
             translatorConnection.close();
-            logThreadCustomText("Connection to TranslatorServer closed.");
+            logThreadCustomText("Connection to Translator closed.");
         } catch (IOException exception) {
             logThreadException(exception);
         }
@@ -99,24 +99,5 @@ public class MainServer extends Server {
         ));
 
         return "{" + requestForTranslator + "}";
-    }
-
-    public static void main(String[] args) {
-        // TODO: tworzenie wątków dynamiczne na potrzeby nowych klientów
-
-        ServerSocket serverSocket = null;
-        String host = "localhost";
-
-        try {
-            serverSocket = new ServerSocket();
-            serverSocket.bind(new InetSocketAddress(host, port));
-        } catch (IOException exception) {
-            exception.printStackTrace();
-            System.exit(1);
-        }
-
-        for (int i = 1; i <= 5; i++) {
-            new MainServer(serverSocket);
-        }
     }
 }

@@ -1,50 +1,44 @@
 package zad1.dict.server.translator;
 
-import zad1.dict.server.Server;
-import zad1.dict.server.parser.MainServerRequest;
-import zad1.dict.server.parser.MainServerRequestParser;
+import zad1.dict.server.ServerWorker;
+import zad1.dict.server.parser.ProxyRequest;
+import zad1.dict.server.parser.ProxyRequestParser;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 
-public abstract class TranslatorServer extends Server {
-    // TODO: Tworzenie wątków tylko na potrzebę obsługi tłumaczenia
+public abstract class TranslatorWorker extends ServerWorker {
     abstract protected String getTranslation(String word);
 
-    public TranslatorServer(ServerSocket serverSocket) {
-        super(serverSocket);
-    }
-
-    public String getConnectionLabel() {
-        return "Connection with MainServer";
+    public TranslatorWorker(Socket connection) {
+        super(connection);
     }
 
     protected void handleRequests() throws IOException {
         for (String line; (line = reader.readLine()) != null; ) {
             logThreadCustomText("Received " + line);
-            handleParsedRequest(MainServerRequestParser.parse(line));
+            handleParsedRequest(ProxyRequestParser.parse(line));
         }
     }
 
-    private void handleParsedRequest(MainServerRequest mainServerRequest) throws IOException {
-        if (!mainServerRequest.isValid()) {
+    private void handleParsedRequest(ProxyRequest proxyRequest) throws IOException {
+        if (!proxyRequest.isValid()) {
             writeOutput(400, "Bad Request");
             return;
         }
 
         InetSocketAddress address = new InetSocketAddress(
-                mainServerRequest.getHostAddress(),
-                mainServerRequest.getPort()
+                proxyRequest.getHostAddress(),
+                proxyRequest.getPort()
         );
         if (address.isUnresolved()) {
             writeOutput(401, "Bad Client address");
             return;
         }
 
-        String wordToTranslate = mainServerRequest.getWord();
+        String wordToTranslate = proxyRequest.getWord();
         String translation = getTranslation(wordToTranslate);
         if (translation == null) {
             writeOutput(402, "No translation for word " + wordToTranslate);

@@ -1,5 +1,7 @@
 package zad1.dict.server.translator;
 
+import zad1.dict.server.translator.server.*;
+
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,24 +14,24 @@ public class TranslatorRouteTable {
         Map<String, InetSocketAddress> addressMap = new HashMap<>();
 
         addressMap.put(
-                TranslatorServer_PL_DE.targetLanguage,
-                new InetSocketAddress(host, TranslatorServer_PL_DE.port)
+                Translator_PL_DE.targetLanguage,
+                new InetSocketAddress(host, Translator_PL_DE.port)
         );
         addressMap.put(
-                TranslatorServer_PL_EN.targetLanguage,
-                new InetSocketAddress(host, TranslatorServer_PL_EN.port)
+                Translator_PL_EN.targetLanguage,
+                new InetSocketAddress(host, Translator_PL_EN.port)
         );
         addressMap.put(
-                TranslatorServer_PL_ES.targetLanguage,
-                new InetSocketAddress(host, TranslatorServer_PL_ES.port)
+                Translator_PL_ES.targetLanguage,
+                new InetSocketAddress(host, Translator_PL_ES.port)
         );
         addressMap.put(
-                TranslatorServer_PL_FR.targetLanguage,
-                new InetSocketAddress(host, TranslatorServer_PL_FR.port)
+                Translator_PL_FR.targetLanguage,
+                new InetSocketAddress(host, Translator_PL_FR.port)
         );
         addressMap.put(
-                TranslatorServer_PL_RU.targetLanguage,
-                new InetSocketAddress(host, TranslatorServer_PL_RU.port)
+                Translator_PL_RU.targetLanguage,
+                new InetSocketAddress(host, Translator_PL_RU.port)
         );
 
         return addressMap;

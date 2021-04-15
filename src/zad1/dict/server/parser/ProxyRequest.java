@@ -1,16 +1,16 @@
 package zad1.dict.server.parser;
 
-public class MainServerRequest {
+public class ProxyRequest {
     private boolean isValid;
     private String word;
     private String hostAddress;
     private Integer port;
 
-    public static MainServerRequest getInvalidParseResult() {
-        return new MainServerRequest(false, null, null, null);
+    public static ProxyRequest getInvalidParseResult() {
+        return new ProxyRequest(false, null, null, null);
     }
 
-    public MainServerRequest(boolean isValid, String word, String hostAddress, Integer port) {
+    public ProxyRequest(boolean isValid, String word, String hostAddress, Integer port) {
         this.isValid = isValid;
         this.word = word;
         this.hostAddress = hostAddress;

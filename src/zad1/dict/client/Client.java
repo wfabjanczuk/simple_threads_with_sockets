@@ -3,7 +3,7 @@ package zad1.dict.client;
 import zad1.dict.LoggableSocketThread;
 import zad1.dict.client.parser.TranslatorServerResponse;
 import zad1.dict.client.parser.TranslatorServerResponseParser;
-import zad1.dict.server.MainServer;
+import zad1.dict.server.proxy.Proxy;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +30,7 @@ public class Client extends JFrame implements LoggableSocketThread {
 
 
     public String getConnectionLabel() {
-        return "Connection with MainServer";
+        return "Connection with Proxy";
     }
 
     public Client(String server, int timeout, int localPort) {
@@ -42,7 +42,7 @@ public class Client extends JFrame implements LoggableSocketThread {
         this.localPort = localPort;
 
         try {
-            clientSocket = new Socket(clientHost, MainServer.port);
+            clientSocket = new Socket(clientHost, Proxy.port);
             clientSocketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
             clientSocketWriter = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_8), true);
 
