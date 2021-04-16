@@ -17,8 +17,8 @@ public class Translator_PL_EN extends Translator {
 
     @Override
     protected void handleConnection(Socket connection) throws IOException {
-        TranslatorWorker_PL_EN translatorWorker = new TranslatorWorker_PL_EN(connection);
-        translatorWorker.startIfValid();
+        TranslatorWorker_PL_EN translatorWorkerPlEn = new TranslatorWorker_PL_EN(connection);
+        translatorWorkerPlEn.startIfValid();
     }
 
     public static void main(String[] args) {

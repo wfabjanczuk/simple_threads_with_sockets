@@ -16,7 +16,7 @@ public class Translator_PL_DE extends Translator {
 
     @Override
     protected void handleConnection(Socket connection) throws IOException {
-        TranslatorWorker_PL_DE translatorWorker = new TranslatorWorker_PL_DE(connection);
-        translatorWorker.startIfValid();
+        TranslatorWorker_PL_DE translatorWorkerPlDe = new TranslatorWorker_PL_DE(connection);
+        translatorWorkerPlDe.startIfValid();
     }
 }

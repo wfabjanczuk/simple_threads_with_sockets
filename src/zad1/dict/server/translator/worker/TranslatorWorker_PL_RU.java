@@ -1,12 +1,12 @@
 package zad1.dict.server.translator.worker;
 
-import zad1.dict.server.translator.server.Translator;
+import zad1.dict.server.translator.TranslatorWorker;
 
-import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TranslatorWorker_PL_RU extends Translator {
+public class TranslatorWorker_PL_RU extends TranslatorWorker {
     private static final Map<String, String> dictionary = createDictionary();
 
     private static Map<String, String> createDictionary() {
@@ -26,7 +26,7 @@ public class TranslatorWorker_PL_RU extends Translator {
         return dictionary.get(word);
     }
 
-    public TranslatorWorker_PL_RU(ServerSocket serverSocket) {
-        super(serverSocket);
+    public TranslatorWorker_PL_RU(Socket connection) {
+        super(connection);
     }
 }
