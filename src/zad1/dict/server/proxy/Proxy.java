@@ -44,8 +44,6 @@ public class Proxy extends Server {
             System.exit(1);
         }
 
-        for (int i = 1; i <= 5; i++) {
-            new Proxy(serverSocket);
-        }
+        new Proxy(serverSocket);
     }
 }

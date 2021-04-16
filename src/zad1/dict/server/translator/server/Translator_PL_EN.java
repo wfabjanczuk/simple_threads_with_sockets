@@ -33,8 +33,6 @@ public class Translator_PL_EN extends Translator {
             System.exit(1);
         }
 
-        for (int i = 1; i <= 5; i++) {
-            new Translator_PL_EN(serverSocket);
-        }
+        new Translator_PL_EN(serverSocket);
     }
 }
