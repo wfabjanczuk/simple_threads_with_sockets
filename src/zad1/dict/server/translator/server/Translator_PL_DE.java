@@ -2,7 +2,6 @@ package zad1.dict.server.translator.server;
 
 import zad1.dict.server.translator.worker.TranslatorWorker_PL_DE;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -15,7 +14,7 @@ public class Translator_PL_DE extends Translator {
     }
 
     @Override
-    protected void handleConnection(Socket connection) throws IOException {
+    protected void handleConnection(Socket connection) {
         TranslatorWorker_PL_DE translatorWorkerPlDe = new TranslatorWorker_PL_DE(connection);
         translatorWorkerPlDe.startIfValid();
     }

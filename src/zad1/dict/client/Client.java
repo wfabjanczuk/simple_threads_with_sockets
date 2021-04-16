@@ -171,12 +171,10 @@ public class Client extends JFrame implements LoggableSocketThread {
         return "{\"" + word + "\",\"EN\"," + localPort + "}";
     }
 
-    public static void main(String[] args) {
-        // TODO: tworzenie pojedynczego klienta z np. portem
-
+    public static void runLocally(int numberOfClients) {
         int timeout = 0;
         String server = "localhost";
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < numberOfClients; i++) {
             new Client(server, timeout, 1500 + i);
         }
     }
