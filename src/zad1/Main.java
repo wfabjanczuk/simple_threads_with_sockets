@@ -1,6 +1,6 @@
 package zad1;
 
-import zad1.dict.client.Client;
+import zad1.dict.client.Application;
 import zad1.dict.server.Server;
 import zad1.dict.server.proxy.Proxy;
 import zad1.dict.server.translator.server.*;
@@ -15,6 +15,6 @@ public class Main {
         Server.startLocally(Translator_PL_FR.class, Translator_PL_FR.port);
         Server.startLocally(Translator_PL_RU.class, Translator_PL_RU.port);
 
-        Client.runLocally(2);
+        Application.startLocally(2);
     }
 }

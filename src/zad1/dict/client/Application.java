@@ -1,8 +1,8 @@
 package zad1.dict.client;
 
 import zad1.dict.LoggableSocketThread;
-import zad1.dict.client.parser.TranslatorServerResponse;
-import zad1.dict.client.parser.TranslatorServerResponseParser;
+import zad1.dict.client.parser.TranslatorResponse;
+import zad1.dict.client.parser.TranslatorResponseParser;
 import zad1.dict.server.proxy.Proxy;
 
 import javax.swing.*;
@@ -16,7 +16,7 @@ import java.io.PrintWriter;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 
-public class Client extends JFrame implements LoggableSocketThread {
+public class Application extends JFrame implements LoggableSocketThread {
     private int localPort;
 
     private Socket clientSocket;
@@ -33,7 +33,7 @@ public class Client extends JFrame implements LoggableSocketThread {
         return "Proxy connection";
     }
 
-    public Client(String server, int timeout, int localPort) {
+    public Application(String server, int timeout, int localPort) {
         initClientBackend(server, timeout, localPort);
         initClientGui();
     }
@@ -155,9 +155,9 @@ public class Client extends JFrame implements LoggableSocketThread {
             String response = serverSocketReader.readLine();
             logThreadReceived(response);
 
-            TranslatorServerResponse translatorServerResponse = TranslatorServerResponseParser.parse(response);
-            if (translatorServerResponse.isValid()) {
-                ta.setText(translatorServerResponse.getTranslation());
+            TranslatorResponse translatorResponse = TranslatorResponseParser.parse(response);
+            if (translatorResponse.isValid()) {
+                ta.setText(translatorResponse.getTranslation());
             } else {
                 ta.setText("");
             }
@@ -171,11 +171,11 @@ public class Client extends JFrame implements LoggableSocketThread {
         return "{\"" + word + "\",\"EN\"," + localPort + "}";
     }
 
-    public static void runLocally(int numberOfClients) {
+    public static void startLocally(int numberOfClients) {
         int timeout = 0;
         String server = "localhost";
         for (int i = 0; i < numberOfClients; i++) {
-            new Client(server, timeout, 1500 + i);
+            new Application(server, timeout, 1500 + i);
         }
     }
 }

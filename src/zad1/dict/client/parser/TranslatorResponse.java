@@ -1,14 +1,14 @@
 package zad1.dict.client.parser;
 
-public class TranslatorServerResponse {
+public class TranslatorResponse {
     private boolean isValid;
     private String translation;
 
-    public static TranslatorServerResponse getInvalidParseResult() {
-        return new TranslatorServerResponse(false, null);
+    public static TranslatorResponse getInvalidParseResult() {
+        return new TranslatorResponse(false, null);
     }
 
-    public TranslatorServerResponse(boolean isValid, String translation) {
+    public TranslatorResponse(boolean isValid, String translation) {
         this.isValid = isValid;
         this.translation = translation;
     }
