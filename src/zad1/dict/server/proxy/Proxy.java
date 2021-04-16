@@ -9,17 +9,20 @@ import java.net.Socket;
 
 public class Proxy extends Server {
     public final static int port = 2628;
+    public final static String defaultConnectionLabel = "Client connection";
+
     private final String serverHostname;
     private final String osName;
 
     public Proxy(ServerSocket serverSocket) {
         super(serverSocket);
+
         serverHostname = serverSocket.getInetAddress().getHostName();
         osName = System.getProperty("os.name");
     }
 
-    public String getConnectionLabel() {
-        return "Connection with Client";
+    public String getDefaultConnectionLabel() {
+        return defaultConnectionLabel;
     }
 
     protected void handleConnection(Socket connection) {

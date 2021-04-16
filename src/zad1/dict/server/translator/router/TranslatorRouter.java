@@ -1,4 +1,4 @@
-package zad1.dict.server.translator;
+package zad1.dict.server.translator.router;
 
 import zad1.dict.server.translator.server.*;
 
@@ -6,7 +6,7 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TranslatorRouteTable {
+public class TranslatorRouter {
     public static final String host = "localhost";
     private static final Map<String, InetSocketAddress> addressMap = initAddressMap();
 

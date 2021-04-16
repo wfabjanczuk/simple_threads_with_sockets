@@ -6,17 +6,13 @@ public interface LoggableSocketThread {
         return this.getClass().getSimpleName() + "@" + this.hashCode() + ":";
     }
 
-    default String getConnectionLabel() {
-        return "Connection";
+    default String getDefaultConnectionLabel() {
+        return "Default connection";
     }
 
     default void logThreadException(Exception exception) {
         System.out.println(getThreadLabel() + " " + exception.getMessage());
         exception.printStackTrace();
-    }
-
-    default void logThreadCustomText(String customText) {
-        System.out.println(getThreadLabel() + " " + customText);
     }
 
     default void logThreadStarted() {
@@ -28,10 +24,42 @@ public interface LoggableSocketThread {
     }
 
     default void logThreadConnectionEstablished() {
-        System.out.println(getThreadLabel() + " " + getConnectionLabel() + " established.");
+        System.out.println(getThreadLabel() + " " + getDefaultConnectionLabel() + " established.");
+    }
+
+    default void logThreadConnectionEstablished(String connectionName) {
+        System.out.println(getThreadLabel() + " " + connectionName + " established.");
     }
 
     default void logThreadConnectionClosed() {
-        System.out.println(getThreadLabel() + " " + getConnectionLabel() + " closed.");
+        System.out.println(getThreadLabel() + " " + getDefaultConnectionLabel() + " closed.");
+    }
+
+    default void logThreadConnectionClosed(String connectionName) {
+        System.out.println(getThreadLabel() + " " + connectionName + " closed.");
+    }
+
+    default void logThreadConnectionResourcesOpened() {
+        System.out.println(getThreadLabel() + " " + getDefaultConnectionLabel() + " resources opened.");
+    }
+
+    default void logThreadConnectionResourcesOpened(String connectionName) {
+        System.out.println(getThreadLabel() + " " + connectionName + " resources opened.");
+    }
+
+    default void logThreadConnectionResourcesClosed() {
+        System.out.println(getThreadLabel() + " " + getDefaultConnectionLabel() + " resources closed.");
+    }
+
+    default void logThreadConnectionResourcesClosed(String connectionName) {
+        System.out.println(getThreadLabel() + " " + connectionName + " resources closed.");
+    }
+
+    default void logThreadSent(String line) {
+        System.out.println(getThreadLabel() + " Sent " + line);
+    }
+
+    default void logThreadReceived(String line) {
+        System.out.println(getThreadLabel() + " Received " + line);
     }
 }

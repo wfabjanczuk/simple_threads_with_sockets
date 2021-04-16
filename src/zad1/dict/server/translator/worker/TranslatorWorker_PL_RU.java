@@ -1,7 +1,5 @@
 package zad1.dict.server.translator.worker;
 
-import zad1.dict.server.translator.TranslatorWorker;
-
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;

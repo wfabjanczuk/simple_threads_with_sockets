@@ -29,8 +29,8 @@ public class Client extends JFrame implements LoggableSocketThread {
     Container cp = getContentPane();
 
 
-    public String getConnectionLabel() {
-        return "Connection with Proxy";
+    public String getDefaultConnectionLabel() {
+        return "Proxy connection";
     }
 
     public Client(String server, int timeout, int localPort) {
@@ -143,7 +143,7 @@ public class Client extends JFrame implements LoggableSocketThread {
     private void translate(JTextField tf) {
         try {
             String request = prepareTranslationRequest(tf);
-            logThreadCustomText("Sent " + request);
+            logThreadSent(request);
             clientSocketWriter.println(request);
 
             Socket responseConnection = serverSocket.accept();
@@ -153,7 +153,7 @@ public class Client extends JFrame implements LoggableSocketThread {
             // TODO: Close responseConnection and dispose resources
 
             String response = serverSocketReader.readLine();
-            logThreadCustomText("Received " + response);
+            logThreadReceived(response);
 
             TranslatorServerResponse translatorServerResponse = TranslatorServerResponseParser.parse(response);
             if (translatorServerResponse.isValid()) {
