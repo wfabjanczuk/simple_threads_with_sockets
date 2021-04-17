@@ -22,13 +22,14 @@ public class JavaFxGui extends Application implements Gui {
 
     private static Stage primaryStage;
     private static final Double sceneWidth = 640.0;
-    private static final Double sceneHeight = 120.0;
+    private static final Double sceneHeight = 150.0;
     private static final Double inputTextFieldMaxWidth = 120.0;
 
     private static ChoiceBox<String> languageChoiceBox;
     private static TextField inputField;
     private static Text outputField;
     private static final String translationNotFoundMessage = "--";
+    private static final String[] wordList = {"dom", "szkoła", "nauczyciel", "droga", "krzesło"};
 
     public void setClient(Client client) {
         JavaFxGui.client = client;
@@ -76,17 +77,31 @@ public class JavaFxGui extends Application implements Gui {
         gridPane.prefHeightProperty().bind(parent.heightProperty());
         gridPane.prefWidthProperty().bind(parent.widthProperty());
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             ColumnConstraints col = new ColumnConstraints();
-            col.setPercentWidth(33.3);
+            col.setPercentWidth(25.0);
             gridPane.getColumnConstraints().add(col);
         }
 
-        gridPane.add(prepareTargetLanguagePane(gridPane), 0, 0);
-        gridPane.add(prepareInputPane(gridPane), 1, 0);
-        gridPane.add(prepareOutputPane(gridPane), 2, 0);
+        gridPane.add(prepareWordListPane(gridPane), 0, 0);
+        gridPane.add(prepareTargetLanguagePane(gridPane), 1, 0);
+        gridPane.add(prepareInputPane(gridPane), 2, 0);
+        gridPane.add(prepareOutputPane(gridPane), 3, 0);
 
         return gridPane;
+    }
+
+    private StackPane prepareWordListPane(GridPane gridPane) {
+        return preparePane(
+                new Label("Word list"),
+                prepareWordListText(),
+                true,
+                gridPane
+        );
+    }
+
+    private Text prepareWordListText() {
+        return new Text(String.join(System.lineSeparator(), wordList));
     }
 
     private StackPane prepareTargetLanguagePane(GridPane gridPane) {
