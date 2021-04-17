@@ -1,13 +1,46 @@
 package zad1.dict.application.gui;
 
+import zad1.dict.client.Client;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public abstract class SwingGui extends JFrame implements Gui {
+public class SwingGui extends JFrame implements Gui {
     JTextArea ta = new JTextArea(20, 40);
     Container cp = getContentPane();
+
+    private final Client client;
+
+    public SwingGui(Client client) {
+        this.client = client;
+    }
+
+    public void setWindowTitle() {
+        setTitle(client.getThreadLabel() + " on port " + client.getLocalPort());
+        pack();
+        if (client.getLocalPort() > 1500) {
+            // TODO: replace it, now it is for testing only
+            setLocationRelativeTo(null);
+        }
+        setVisible(true);
+    }
+
+    public String getTranslation(String word, String targetLanguage) {
+        try {
+            return client.getTranslation(word, targetLanguage);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        client.closeResources();
+    }
 
     public void initialize() {
         // wszystko poszło dobrze - tworzymy i pokazujemy okno wyszukiwania
