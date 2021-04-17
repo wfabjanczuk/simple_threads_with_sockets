@@ -1,14 +1,12 @@
 package zad1.dict.gui;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -63,16 +61,16 @@ public class JavaFxGui extends Application implements Gui {
         setWindowTitle();
 
         VBox root = new VBox();
-        root.getChildren().add(getMainGridPane(root));
+        root.getChildren().add(prepareMainGridPane(root));
 
         Scene scene = new Scene(root, sceneWidth, sceneHeight);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    private GridPane getMainGridPane(VBox parent) {
+    private GridPane prepareMainGridPane(VBox parent) {
         GridPane gridPane = new GridPane();
-        gridPane.setPrefHeight(sceneHeight);
+        gridPane.prefHeightProperty().bind(parent.heightProperty());
         gridPane.prefWidthProperty().bind(parent.widthProperty());
 
         for (int i = 0; i < 3; i++) {
@@ -81,46 +79,46 @@ public class JavaFxGui extends Application implements Gui {
             gridPane.getColumnConstraints().add(col);
         }
 
-        gridPane.add(getTargetLanguagePane(gridPane), 0, 0);
-        gridPane.add(getInputPane(gridPane), 1, 0);
-        gridPane.add(getOutputPane(gridPane), 2, 0);
+        gridPane.add(prepareTargetLanguagePane(gridPane), 0, 0);
+        gridPane.add(prepareInputPane(gridPane), 1, 0);
+        gridPane.add(prepareOutputPane(gridPane), 2, 0);
 
         return gridPane;
     }
 
-    private StackPane getTargetLanguagePane(GridPane gridPane) {
-        return getPane(
+    private StackPane prepareTargetLanguagePane(GridPane gridPane) {
+        return preparePane(
                 new Label("Target language"),
-                getTargetLanguageChoiceBox(),
+                prepareTargetLanguageChoiceBox(),
                 true,
                 gridPane
         );
     }
 
-    private ChoiceBox<String> getTargetLanguageChoiceBox() {
+    private ChoiceBox<String> prepareTargetLanguageChoiceBox() {
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
         choiceBox.getItems().addAll(TranslatorRouter.getTargetLanguages());
         choiceBox.setValue(Translator_PL_EN.targetLanguage);
         return choiceBox;
     }
 
-    private StackPane getInputPane(GridPane gridPane) {
-        return getPane(
+    private StackPane prepareInputPane(GridPane gridPane) {
+        return prepareInputPane(
                 new Label("Enter word"),
-                getInputTextField(),
-                true,
+                prepareInputTextField(),
+                new Button("Translate"),
                 gridPane
         );
     }
 
-    private TextField getInputTextField() {
+    private TextField prepareInputTextField() {
         TextField inputTextField = new TextField("");
         inputTextField.setMaxWidth(inputTextFieldMaxWidth);
         return inputTextField;
     }
 
-    private StackPane getOutputPane(GridPane gridPane) {
-        return getPane(
+    private StackPane prepareOutputPane(GridPane gridPane) {
+        return preparePane(
                 new Label("Translation"),
                 new Text(translationNotFoundMessage),
                 false,
@@ -128,7 +126,7 @@ public class JavaFxGui extends Application implements Gui {
         );
     }
 
-    private StackPane getPane(Label topLeftLabel, Node centerNode, Boolean rightSeparator, GridPane parentGridPane) {
+    private StackPane preparePane(Label topLeftLabel, Node centerNode, Boolean rightSeparator, GridPane parentGridPane) {
         StackPane stackPane;
 
         if (rightSeparator) {
@@ -144,6 +142,16 @@ public class JavaFxGui extends Application implements Gui {
 
         stackPane.prefHeightProperty().bind(parentGridPane.heightProperty());
         stackPane.prefWidthProperty().bind(parentGridPane.widthProperty().divide(3));
+
+        return stackPane;
+    }
+
+    private StackPane prepareInputPane(Label topLeftLabel, Node centerNode, Button translateButton, GridPane parentGridPane) {
+        StackPane stackPane = preparePane(topLeftLabel, centerNode, true, parentGridPane);
+
+        stackPane.getChildren().add(translateButton);
+        StackPane.setAlignment(translateButton, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(translateButton, new Insets(15, 10, 10, 10));
 
         return stackPane;
     }
