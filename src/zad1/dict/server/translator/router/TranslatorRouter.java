@@ -5,6 +5,7 @@ import zad1.dict.server.translator.server.*;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class TranslatorRouter {
     public static final String host = "localhost";
@@ -39,5 +40,9 @@ public class TranslatorRouter {
 
     public static InetSocketAddress getAddressForLanguage(String language) {
         return addressMap.get(language);
+    }
+
+    public static Set<String> getTargetLanguages() {
+        return addressMap.keySet();
     }
 }

@@ -3,9 +3,12 @@ package zad1.dict.gui;
 import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -13,6 +16,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import zad1.dict.client.Client;
+import zad1.dict.server.translator.router.TranslatorRouter;
+import zad1.dict.server.translator.server.Translator_PL_EN;
 
 public class JavaFxGui extends Application implements Gui {
     private static Client client;
@@ -20,6 +25,9 @@ public class JavaFxGui extends Application implements Gui {
     private static Stage primaryStage;
     private static final Double sceneWidth = 640.0;
     private static final Double sceneHeight = 120.0;
+    private static final Double inputTextFieldMaxWidth = 120.0;
+
+    private static final String translationNotFoundMessage = "--";
 
     public void setClient(Client client) {
         JavaFxGui.client = client;
@@ -81,49 +89,62 @@ public class JavaFxGui extends Application implements Gui {
     }
 
     private StackPane getTargetLanguagePane(GridPane gridPane) {
-        return getDefaultTopPane(
+        return getPane(
                 new Label("Target language"),
-                new Text("Text"),
+                getTargetLanguageChoiceBox(),
                 true,
                 gridPane
         );
+    }
+
+    private ChoiceBox<String> getTargetLanguageChoiceBox() {
+        ChoiceBox<String> choiceBox = new ChoiceBox<>();
+        choiceBox.getItems().addAll(TranslatorRouter.getTargetLanguages());
+        choiceBox.setValue(Translator_PL_EN.targetLanguage);
+        return choiceBox;
     }
 
     private StackPane getInputPane(GridPane gridPane) {
-        return getDefaultTopPane(
+        return getPane(
                 new Label("Enter word"),
-                new Text("Text"),
+                getInputTextField(),
                 true,
                 gridPane
         );
     }
 
+    private TextField getInputTextField() {
+        TextField inputTextField = new TextField("");
+        inputTextField.setMaxWidth(inputTextFieldMaxWidth);
+        return inputTextField;
+    }
+
     private StackPane getOutputPane(GridPane gridPane) {
-        return getDefaultTopPane(
+        return getPane(
                 new Label("Translation"),
-                new Text("Text"),
+                new Text(translationNotFoundMessage),
                 false,
                 gridPane
         );
     }
 
-    private StackPane getDefaultTopPane(Label label, Text text, Boolean rightSeparator, GridPane gridPane) {
-        StackPane defaultTopPane;
+    private StackPane getPane(Label topLeftLabel, Node centerNode, Boolean rightSeparator, GridPane parentGridPane) {
+        StackPane stackPane;
 
         if (rightSeparator) {
             Separator separator = new Separator(Orientation.VERTICAL);
-            defaultTopPane = new StackPane(label, text, separator);
+            stackPane = new StackPane(topLeftLabel, centerNode, separator);
             StackPane.setAlignment(separator, Pos.CENTER_RIGHT);
         } else {
-            defaultTopPane = new StackPane(label, text);
+            stackPane = new StackPane(topLeftLabel, centerNode);
         }
 
-        StackPane.setAlignment(label, Pos.TOP_LEFT);
-        StackPane.setAlignment(text, Pos.CENTER);
+        StackPane.setAlignment(topLeftLabel, Pos.TOP_LEFT);
+        StackPane.setAlignment(centerNode, Pos.CENTER);
 
-        defaultTopPane.prefHeightProperty().bind(gridPane.heightProperty());
-        defaultTopPane.prefWidthProperty().bind(gridPane.widthProperty().divide(4));
+        stackPane.prefHeightProperty().bind(parentGridPane.heightProperty());
+        stackPane.prefWidthProperty().bind(parentGridPane.widthProperty().divide(3));
 
-        return defaultTopPane;
+        return stackPane;
     }
 }
