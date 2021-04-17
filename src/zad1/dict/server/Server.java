@@ -41,7 +41,9 @@ public abstract class Server extends Thread implements LoggableSocketThread {
         while (isServerRunning) {
             try {
                 Socket connection = serverSocket.accept();
+
                 logThreadConnectionEstablished();
+
                 handleConnection(connection);
             } catch (IOException exception) {
                 logThreadException(exception);

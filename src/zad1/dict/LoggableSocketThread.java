@@ -19,8 +19,16 @@ public interface LoggableSocketThread {
         System.out.println(getThreadLabel() + " Started.");
     }
 
+    default void logThreadInitialized() {
+        System.out.println(getThreadLabel() + " Initialized.");
+    }
+
     default void logThreadCannotStart() {
         System.out.println(getThreadLabel() + " Thread cannot start.");
+    }
+
+    default void logThreadCannotInitialize() {
+        System.out.println(getThreadLabel() + " Thread cannot initialize.");
     }
 
     default void logThreadConnectionEstablished() {
