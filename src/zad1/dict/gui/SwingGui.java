@@ -1,4 +1,4 @@
-package zad1.dict.application.gui;
+package zad1.dict.gui;
 
 import zad1.dict.client.Client;
 
@@ -8,12 +8,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class SwingGui extends JFrame implements Gui {
+    private Client client;
+
     JTextArea ta = new JTextArea(20, 40);
     Container cp = getContentPane();
 
-    private final Client client;
-
-    public SwingGui(Client client) {
+    public void setClient(Client client) {
         this.client = client;
     }
 

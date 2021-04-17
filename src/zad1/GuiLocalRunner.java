@@ -1,26 +1,22 @@
-package zad1.dict.builder;
+package zad1;
 
-import zad1.dict.application.Application;
-import zad1.dict.application.gui.SwingGui;
 import zad1.dict.client.Client;
+import zad1.dict.gui.Gui;
+import zad1.dict.gui.SwingGui;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 
-public class ApplicationBuilder {
-    public static void startMultipleLocally(int numberOfClients) {
-        int firstLocalPort = 1500;
-
-        for (int i = 0; i < numberOfClients; i++) {
-            startInstanceLocally(firstLocalPort + i);
-        }
+public class GuiLocalRunner {
+    public static void main(String[] args) {
+        startLocally(Integer.parseInt(args[0]));
     }
 
-    public static void startInstanceLocally(int applicationPort) {
+    private static void startLocally(int applicationPort) {
         String applicationHost = "localhost";
         String proxyHost = "localhost";
-        int translatorConnectionTimeout = 5000;
+        int translatorConnectionTimeout = 1000;
 
         boolean isInitialized = false;
         Client client = null;
@@ -36,10 +32,11 @@ public class ApplicationBuilder {
         }
 
         if (isInitialized) {
-            Application application = new Application(new SwingGui(client));
-            application.start();
+            Gui gui = new SwingGui();
+            gui.setClient(client);
+            gui.initialize();
         } else {
-            System.out.println("Application cannot start.");
+            System.out.println("Gui cannot start.");
         }
     }
 }
