@@ -1,6 +1,6 @@
 package zad1;
 
-import zad1.dict.client.Application;
+import zad1.dict.application.Application;
 import zad1.dict.server.Server;
 import zad1.dict.server.proxy.Proxy;
 import zad1.dict.server.translator.server.*;

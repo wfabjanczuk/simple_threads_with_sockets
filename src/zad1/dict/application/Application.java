@@ -1,47 +1,21 @@
-package zad1.dict.client;
+package zad1.dict.application;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import zad1.dict.application.gui.SwingGui;
+import zad1.dict.client.Client;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 
-public class Application extends JFrame {
+public class Application extends SwingGui {
     private final Client client;
-
-    JTextArea ta = new JTextArea(20, 40);
-    Container cp = getContentPane();
 
     public Application(Client client) {
         this.client = client;
-        initClientGui();
+        initialize();
     }
 
-    private void initClientGui() {
-        // wszystko poszło dobrze - tworzymy i pokazujemy okno wyszukiwania
-
-        Font f = new Font("Dialog", Font.BOLD, 14);
-        ta.setFont(f);
-        cp.add(new JScrollPane(ta));
-        final JTextField tf = new JTextField();
-        tf.setFont(f);
-        tf.setBorder(BorderFactory.createLineBorder(Color.blue, 2));
-        cp.add(tf, "South");
-
-        ta.setText("Prototyp GUI na podstawie wykładu\n"
-                + "Tłumaczone słowa: dom, szkoła, nauczyciel, droga, krzesło.\n"
-                + "Tymczasowo ustawiono na sztywno język angielski."
-        );
-        tf.addActionListener(e -> translate(tf));
-
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
-        });
-
+    public void setWindowTitle() {
         setTitle(client.getThreadLabel() + " on port " + client.getLocalPort());
         pack();
         if (client.getLocalPort() > 1500) {
@@ -49,22 +23,14 @@ public class Application extends JFrame {
             setLocationRelativeTo(null);
         }
         setVisible(true);
-
-        // Ustalenie fokusu na polu wprowadzania szukanych słów
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                tf.requestFocus();
-            }
-        });
     }
 
-    private void translate(JTextField tf) {
+    public String getTranslation(String word, String targetLanguage) {
         try {
-            String word = tf.getText();
-            String translation = client.getTranslation(word, "EN");
-            ta.setText(translation);
+            return client.getTranslation(word, targetLanguage);
         } catch (Exception exception) {
             exception.printStackTrace();
+            return null;
         }
     }
 
