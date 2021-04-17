@@ -2,7 +2,7 @@ package zad1;
 
 import zad1.dict.client.Client;
 import zad1.dict.gui.Gui;
-import zad1.dict.gui.SwingGui;
+import zad1.dict.gui.JavaFxGui;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -32,7 +32,7 @@ public class GuiLocalRunner {
         }
 
         if (isInitialized) {
-            Gui gui = new SwingGui();
+            Gui gui = new JavaFxGui();
             gui.setClient(client);
             gui.initialize();
         } else {
