@@ -25,6 +25,9 @@ public class JavaFxGui extends Application implements Gui {
     private static final Double sceneHeight = 120.0;
     private static final Double inputTextFieldMaxWidth = 120.0;
 
+    private static ChoiceBox<String> languageChoiceBox;
+    private static TextField inputField;
+    private static Text outputField;
     private static final String translationNotFoundMessage = "--";
 
     public void setClient(Client client) {
@@ -96,34 +99,45 @@ public class JavaFxGui extends Application implements Gui {
     }
 
     private ChoiceBox<String> prepareTargetLanguageChoiceBox() {
-        ChoiceBox<String> choiceBox = new ChoiceBox<>();
-        choiceBox.getItems().addAll(TranslatorRouter.getTargetLanguages());
-        choiceBox.setValue(Translator_PL_EN.targetLanguage);
-        return choiceBox;
+        languageChoiceBox = new ChoiceBox<>();
+        languageChoiceBox.getItems().addAll(TranslatorRouter.getTargetLanguages());
+        languageChoiceBox.setValue(Translator_PL_EN.targetLanguage);
+        return languageChoiceBox;
     }
 
     private StackPane prepareInputPane(GridPane gridPane) {
         return prepareInputPane(
                 new Label("Enter word"),
                 prepareInputTextField(),
-                new Button("Translate"),
+                prepareTranslateButton(),
                 gridPane
         );
     }
 
     private TextField prepareInputTextField() {
-        TextField inputTextField = new TextField("");
-        inputTextField.setMaxWidth(inputTextFieldMaxWidth);
-        return inputTextField;
+        inputField = new TextField("");
+        inputField.setMaxWidth(inputTextFieldMaxWidth);
+        return inputField;
+    }
+
+    private Button prepareTranslateButton() {
+        Button translateButton = new Button("Translate");
+        translateButton.setOnAction(actionEvent -> translateInput());
+        return translateButton;
     }
 
     private StackPane prepareOutputPane(GridPane gridPane) {
         return preparePane(
                 new Label("Translation"),
-                new Text(translationNotFoundMessage),
+                prepareOutputField(),
                 false,
                 gridPane
         );
+    }
+
+    private Text prepareOutputField() {
+        outputField = new Text(translationNotFoundMessage);
+        return outputField;
     }
 
     private StackPane preparePane(Label topLeftLabel, Node centerNode, Boolean rightSeparator, GridPane parentGridPane) {
@@ -154,5 +168,15 @@ public class JavaFxGui extends Application implements Gui {
         StackPane.setMargin(translateButton, new Insets(15, 10, 10, 10));
 
         return stackPane;
+    }
+
+    private void translateInput() {
+        String translation = getTranslation(inputField.getText(), languageChoiceBox.getValue());
+
+        if (translation == null) {
+            outputField.setText(translationNotFoundMessage);
+        } else {
+            outputField.setText(translation);
+        }
     }
 }
