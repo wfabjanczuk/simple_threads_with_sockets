@@ -1,5 +1,6 @@
 package zad1.dict.server.translator.worker;
 
+import zad1.dict.constant.Messages;
 import zad1.dict.server.ServerWorker;
 import zad1.dict.server.parser.ProxyRequest;
 import zad1.dict.server.parser.ProxyRequestParser;
@@ -12,8 +13,6 @@ import java.net.Socket;
 
 public abstract class TranslatorWorker extends ServerWorker {
     abstract protected String getTranslation(String word);
-
-    public static final String noTranslationMessage = "--";
 
     private final String clientConnectionLabel = "Client connection";
     private Socket clientConnection;
@@ -56,9 +55,10 @@ public abstract class TranslatorWorker extends ServerWorker {
         if (translation != null) {
             makeClientConnection(address, translation);
             writeOutput(200, getThreadLabel() + " Successfully sent translation to Client");
+            return;
         }
 
-        translation = noTranslationMessage;
+        translation = Messages.noTranslationMessage;
         makeClientConnection(address, translation);
         writeOutput(200, getThreadLabel() + " No translation for word " + wordToTranslate);
     }

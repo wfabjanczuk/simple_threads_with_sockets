@@ -16,6 +16,7 @@ public class GuiLocalRunner {
     private static void startLocally(int applicationPort) {
         String applicationHost = "localhost";
         String proxyHost = "localhost";
+        int proxyPort = 2628;
         int translatorConnectionTimeout = 1000;
 
         boolean isInitialized = false;
@@ -25,7 +26,7 @@ public class GuiLocalRunner {
             ServerSocket serverSocket = new ServerSocket();
             serverSocket.bind(new InetSocketAddress(applicationHost, applicationPort));
 
-            client = new Client(proxyHost, serverSocket, translatorConnectionTimeout);
+            client = new Client(proxyHost, proxyPort, serverSocket, translatorConnectionTimeout);
             isInitialized = client.initializeIfValid();
         } catch (IOException exception) {
             exception.printStackTrace();

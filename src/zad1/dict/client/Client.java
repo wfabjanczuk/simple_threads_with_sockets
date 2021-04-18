@@ -3,7 +3,6 @@ package zad1.dict.client;
 import zad1.dict.LoggableSocketThread;
 import zad1.dict.client.parser.TranslatorResponse;
 import zad1.dict.client.parser.TranslatorResponseParser;
-import zad1.dict.server.proxy.Proxy;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -15,6 +14,7 @@ public class Client extends Thread implements LoggableSocketThread {
 
     public final static String defaultConnectionLabel = "Proxy connection";
     public final String proxyHost;
+    public final int proxyPort;
     private Socket proxyConnection;
     private PrintWriter proxySocketWriter;
     private BufferedReader proxySocketReader;
@@ -24,8 +24,9 @@ public class Client extends Thread implements LoggableSocketThread {
     private Socket translatorConnection;
     private BufferedReader translatorBufferedReader;
 
-    public Client(String proxyHost, ServerSocket serverSocket, int translatorConnectionTimeout) {
+    public Client(String proxyHost, int proxyPort, ServerSocket serverSocket, int translatorConnectionTimeout) {
         this.proxyHost = proxyHost;
+        this.proxyPort = proxyPort;
         this.serverSocket = serverSocket;
         this.translatorConnectionTimeout = translatorConnectionTimeout;
     }
@@ -66,7 +67,7 @@ public class Client extends Thread implements LoggableSocketThread {
     }
 
     private void openProxyResources() throws IOException {
-        proxyConnection = new Socket(proxyHost, Proxy.port);
+        proxyConnection = new Socket(proxyHost, proxyPort);
 
         logThreadConnectionEstablished();
 

@@ -6,7 +6,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Proxy extends Server {
-    public final static int port = 2628;
     public final static String defaultConnectionLabel = "Client connection";
 
     private final String serverHostname;

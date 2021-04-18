@@ -7,7 +7,6 @@ import java.net.Socket;
 
 public class Translator_PL_EN extends Translator {
     public static String targetLanguage = "EN";
-    public static int port = 1601;
 
     public Translator_PL_EN(ServerSocket serverSocket) {
         super(serverSocket);

@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class ProxyRequestParser {
     private static final Pattern pattern = Pattern.compile(
-            "^\\{\"(\\w+)\",\"([\\d.]+)\",([1-9]\\d+)\\}$",
+            "^\\{\"(\\w*)\",\"([\\d.]+)\",([1-9]\\d+)\\}$",
             Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CHARACTER_CLASS
     );
 

@@ -14,9 +14,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import zad1.dict.client.Client;
-import zad1.dict.server.translator.router.TranslatorRouter;
-import zad1.dict.server.translator.server.Translator_PL_EN;
-import zad1.dict.server.translator.worker.TranslatorWorker;
+import zad1.dict.constant.Languages;
+import zad1.dict.constant.Messages;
+import zad1.dict.constant.Words;
 
 public class JavaFxGui extends Application implements Gui {
     private static Client client;
@@ -29,8 +29,6 @@ public class JavaFxGui extends Application implements Gui {
     private static ChoiceBox<String> languageChoiceBox;
     private static TextField inputField;
     private static Text outputField;
-    private static final String translationNotFoundMessage = "(no translation)";
-    private static final String[] wordList = {"dom", "szkoła", "nauczyciel", "droga", "krzesło"};
 
     public void setClient(Client client) {
         JavaFxGui.client = client;
@@ -45,7 +43,7 @@ public class JavaFxGui extends Application implements Gui {
         try {
             String translation = client.getTranslation(word, targetLanguage);
 
-            if (translation.equals(TranslatorWorker.noTranslationMessage)) {
+            if (translation.equals(Messages.noTranslationMessage)) {
                 return null;
             }
 
@@ -108,7 +106,7 @@ public class JavaFxGui extends Application implements Gui {
     }
 
     private Text prepareWordListText() {
-        return new Text(String.join(System.lineSeparator(), wordList));
+        return new Text(String.join(System.lineSeparator(), Words.wordList));
     }
 
     private StackPane prepareTargetLanguagePane(GridPane gridPane) {
@@ -122,8 +120,8 @@ public class JavaFxGui extends Application implements Gui {
 
     private ChoiceBox<String> prepareTargetLanguageChoiceBox() {
         languageChoiceBox = new ChoiceBox<>();
-        languageChoiceBox.getItems().addAll(TranslatorRouter.getTargetLanguages());
-        languageChoiceBox.setValue(Translator_PL_EN.targetLanguage);
+        languageChoiceBox.getItems().addAll(Languages.targetLanguages);
+        languageChoiceBox.setValue(Languages.defaultTargetLanguage);
         return languageChoiceBox;
     }
 
@@ -158,7 +156,7 @@ public class JavaFxGui extends Application implements Gui {
     }
 
     private Text prepareOutputField() {
-        outputField = new Text(translationNotFoundMessage);
+        outputField = new Text(Messages.noTranslationDisplayMessage);
         return outputField;
     }
 
@@ -196,7 +194,7 @@ public class JavaFxGui extends Application implements Gui {
         String translation = getTranslation(inputField.getText(), languageChoiceBox.getValue());
 
         if (translation == null) {
-            outputField.setText(translationNotFoundMessage);
+            outputField.setText(Messages.noTranslationDisplayMessage);
         } else {
             outputField.setText(translation);
         }
