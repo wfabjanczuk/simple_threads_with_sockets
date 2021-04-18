@@ -2,6 +2,8 @@
 
 ### 1. Compilation
 
+Java version: *1.8.0_281*
+
 To test the project locally, you can simply compile the **LocalRunner** classes with the following command
 (replace `<project_root>` with the path to the project root directory):
 
