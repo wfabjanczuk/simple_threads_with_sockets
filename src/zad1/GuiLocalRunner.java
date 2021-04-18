@@ -10,13 +10,15 @@ import java.net.ServerSocket;
 
 public class GuiLocalRunner {
     public static void main(String[] args) {
-        startLocally(Integer.parseInt(args[0]));
+        int clientPort = Integer.parseInt(args[0]);
+        int proxyPort = Integer.parseInt(args[1]);
+
+        startLocally(clientPort, proxyPort);
     }
 
-    private static void startLocally(int applicationPort) {
+    private static void startLocally(int clientPort, int proxyPort) {
         String applicationHost = "localhost";
         String proxyHost = "localhost";
-        int proxyPort = 2628;
         int translatorConnectionTimeout = 1000;
 
         boolean isInitialized = false;
@@ -24,7 +26,7 @@ public class GuiLocalRunner {
 
         try {
             ServerSocket serverSocket = new ServerSocket();
-            serverSocket.bind(new InetSocketAddress(applicationHost, applicationPort));
+            serverSocket.bind(new InetSocketAddress(applicationHost, clientPort));
 
             client = new Client(proxyHost, proxyPort, serverSocket, translatorConnectionTimeout);
             isInitialized = client.initializeIfValid();

@@ -10,13 +10,22 @@ import java.net.ServerSocket;
 
 public class BackendLocalRunner {
     public static void main(String[] args) {
-        startLocally(Proxy.class, 2628);
+        int proxyPort = Integer.parseInt(args[0]);
+        int firstTranslatorPort = Integer.parseInt(args[1]);
 
-        startTranslatorLocally(Translator_PL_DE.class, 1600);
-        startTranslatorLocally(Translator_PL_EN.class, 1601);
-        startTranslatorLocally(Translator_PL_ES.class, 1602);
-        startTranslatorLocally(Translator_PL_FR.class, 1603);
-        startTranslatorLocally(Translator_PL_RU.class, 1604);
+        startLocally(Proxy.class, proxyPort);
+
+        Class<? extends Translator>[] translatorClasses = new Class[]{
+                Translator_PL_DE.class,
+                Translator_PL_EN.class,
+                Translator_PL_ES.class,
+                Translator_PL_FR.class,
+                Translator_PL_RU.class
+        };
+
+        for (int i = 0; i < translatorClasses.length; i++) {
+            startTranslatorLocally(translatorClasses[i], firstTranslatorPort + i);
+        }
     }
 
     private static void startTranslatorLocally(Class<? extends Translator> translatorClass, int port) {
