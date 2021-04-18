@@ -3,7 +3,6 @@ package zad1.dict.server;
 import zad1.dict.LoggableSocketThread;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 

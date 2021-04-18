@@ -73,7 +73,7 @@ public class ProxyWorker extends ServerWorker implements LoggableSocketThread {
                 clientRequest.getTargetLanguage()
         );
         if (address == null) {
-            writeOutput(401, "Bad Target Language");
+            writeOutput(400, "Bad Target Language");
             return;
         }
 

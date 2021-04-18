@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import zad1.dict.client.Client;
 import zad1.dict.server.translator.router.TranslatorRouter;
 import zad1.dict.server.translator.server.Translator_PL_EN;
+import zad1.dict.server.translator.worker.TranslatorWorker;
 
 public class JavaFxGui extends Application implements Gui {
     private static Client client;
@@ -42,7 +43,13 @@ public class JavaFxGui extends Application implements Gui {
 
     public String getTranslation(String word, String targetLanguage) {
         try {
-            return client.getTranslation(word, targetLanguage);
+            String translation = client.getTranslation(word, targetLanguage);
+
+            if (translation.equals(TranslatorWorker.noTranslationMessage)) {
+                return null;
+            }
+
+            return translation;
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;

@@ -13,6 +13,8 @@ import java.net.Socket;
 public abstract class TranslatorWorker extends ServerWorker {
     abstract protected String getTranslation(String word);
 
+    public static final String noTranslationMessage = "--";
+
     private final String clientConnectionLabel = "Client connection";
     private Socket clientConnection;
     private PrintWriter clientPrintWriter;
@@ -44,19 +46,21 @@ public abstract class TranslatorWorker extends ServerWorker {
                 proxyRequest.getPort()
         );
         if (address.isUnresolved()) {
-            writeOutput(401, "Bad Client address");
+            writeOutput(400, "Bad Client address");
             return;
         }
 
         String wordToTranslate = proxyRequest.getWord();
         String translation = getTranslation(wordToTranslate);
-        if (translation == null) {
-            writeOutput(402, "No translation for word " + wordToTranslate);
-            return;
+
+        if (translation != null) {
+            makeClientConnection(address, translation);
+            writeOutput(200, getThreadLabel() + " Successfully sent translation to Client");
         }
 
+        translation = noTranslationMessage;
         makeClientConnection(address, translation);
-        writeOutput(200, getThreadLabel() + " Successfully sent translation to Client");
+        writeOutput(200, getThreadLabel() + " No translation for word " + wordToTranslate);
     }
 
     private void makeClientConnection(InetSocketAddress address, String translation)
