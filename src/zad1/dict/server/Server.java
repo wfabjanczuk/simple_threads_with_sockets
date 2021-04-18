@@ -50,7 +50,9 @@ public abstract class Server extends Thread implements LoggableSocketThread {
         }
 
         try {
-            serverSocket.close();
+            if (serverSocket != null) {
+                serverSocket.close();
+            }
         } catch (IOException exception) {
             logThreadException(exception);
         }

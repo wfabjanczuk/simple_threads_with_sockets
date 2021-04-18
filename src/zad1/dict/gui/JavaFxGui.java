@@ -59,8 +59,7 @@ public class JavaFxGui extends Application implements Gui {
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
+    public void stop() {
         client.closeResources();
     }
 

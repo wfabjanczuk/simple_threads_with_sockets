@@ -49,7 +49,9 @@ public abstract class ServerWorker extends Thread implements LoggableSocketThrea
 
     private void closeConnectionResources() {
         try {
-            defaultConnection.close();
+            if (defaultConnection != null) {
+                defaultConnection.close();
+            }
 
             logThreadConnectionResourcesClosed();
             logThreadConnectionClosed();

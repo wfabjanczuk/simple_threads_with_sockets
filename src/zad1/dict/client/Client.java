@@ -3,6 +3,7 @@ package zad1.dict.client;
 import zad1.dict.LoggableSocketThread;
 import zad1.dict.client.parser.TranslatorResponse;
 import zad1.dict.client.parser.TranslatorResponseParser;
+import zad1.dict.constant.Messages;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -100,13 +101,16 @@ public class Client extends Thread implements LoggableSocketThread {
     }
 
     public void closeResources() {
-        closeProxyResources();
         closeTranslatorConnectionResources();
+        closeProxyResources();
     }
 
     private void closeProxyResources() {
         try {
-            proxyConnection.close();
+            if (proxyConnection != null) {
+                proxySocketWriter.println(Messages.clientGoodbyeMessage);
+                proxyConnection.close();
+            }
 
             logThreadConnectionResourcesClosed();
             logThreadConnectionClosed();
@@ -165,7 +169,9 @@ public class Client extends Thread implements LoggableSocketThread {
 
     private void closeTranslatorConnectionResources() {
         try {
-            translatorConnection.close();
+            if (translatorConnection != null) {
+                translatorConnection.close();
+            }
 
             logThreadConnectionResourcesClosed(translatorConnectionLabel);
             logThreadConnectionClosed(translatorConnectionLabel);

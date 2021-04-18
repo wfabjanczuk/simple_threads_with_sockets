@@ -89,7 +89,9 @@ public abstract class TranslatorWorker extends ServerWorker {
 
     private void closeClientConnectionResources() {
         try {
-            clientConnection.close();
+            if (clientConnection != null) {
+                clientConnection.close();
+            }
 
             logThreadConnectionResourcesClosed(clientConnectionLabel);
             logThreadConnectionClosed(clientConnectionLabel);

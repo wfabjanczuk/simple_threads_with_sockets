@@ -1,6 +1,7 @@
 package zad1.dict.server.proxy;
 
 import zad1.dict.LoggableSocketThread;
+import zad1.dict.constant.Messages;
 import zad1.dict.server.ServerWorker;
 import zad1.dict.server.parser.ClientRequest;
 import zad1.dict.server.parser.ClientRequestParser;
@@ -49,8 +50,12 @@ public class ProxyWorker extends ServerWorker implements LoggableSocketThread {
         sendInitialResponse();
 
         for (String line; (line = defaultBufferedReader.readLine()) != null; ) {
-            logThreadReceived(line);
+            if (line.equals(Messages.clientGoodbyeMessage)) {
+                logThreadReceived("client goodbye message: " + Messages.clientGoodbyeMessage);
+                break;
+            }
 
+            logThreadReceived(line);
             handleClientRequest(ClientRequestParser.parse(line));
         }
     }
@@ -110,7 +115,9 @@ public class ProxyWorker extends ServerWorker implements LoggableSocketThread {
 
     private void closeTranslatorConnectionResources() {
         try {
-            translatorConnection.close();
+            if (translatorConnection != null) {
+                translatorConnection.close();
+            }
 
             logThreadConnectionResourcesClosed(translatorConnectionLabel);
             logThreadConnectionClosed(translatorConnectionLabel);
