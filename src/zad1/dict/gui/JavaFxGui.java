@@ -29,7 +29,7 @@ public class JavaFxGui extends Application implements Gui {
     private static ChoiceBox<String> languageChoiceBox;
     private static TextField inputField;
     private static Text outputField;
-    private static final String translationNotFoundMessage = "--";
+    private static final String translationNotFoundMessage = "(no translation)";
     private static final String[] wordList = {"dom", "szkoła", "nauczyciel", "droga", "krzesło"};
 
     public void setClient(Client client) {
