@@ -1,10 +1,16 @@
+# Translation through proxy
+
+## Schema
+
+![Schema](schema.png "Schema")
+
 ## Local configuration
 
 ### 1. Compilation
 
 Java version: *1.8.0_281*
 
-To test the project locally, you can simply compile the **LocalRunner** classes with the following command
+To test the project locally, you can simply compile the **BackendLocalRunner, GuiLocalRunner** classes with the following command
 (replace `<project_root>` with the path to the project root directory):
 
 `javac -encoding utf8 -classpath <project_root>/src
@@ -13,7 +19,7 @@ To test the project locally, you can simply compile the **LocalRunner** classes 
 
 ### 2. Running the backend
 
-Make sure the **LocalRunner** classes are already compiled. To run the backend locally use command:
+Make sure the **BackendLocalRunner** class is already compiled. To run the backend locally use command:
 
 `java -classpath <project_root>/src zad1.BackendLocalRunner <proxy_port> <first_translator_port>`
 
@@ -22,7 +28,7 @@ on port *2628* and **Translator** servers occupy port numbers *1600-1604*.
 
 ### 3. Running the graphical user interface
 
-Make sure the backend is up and running. To run the **Gui** instance use command:
+Make sure the backend is up and running and **GuiLocalRunner** class is already compiled. To run the **Gui** instance use command:
 
 `java -classpath <project_root>/src zad1.GuiLocalRunner <client_port> <proxy_port>`
 
